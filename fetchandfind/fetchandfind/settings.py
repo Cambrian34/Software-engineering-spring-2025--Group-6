@@ -82,6 +82,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
         'HOST': 'localhost',
         'PORT': '5432',
+        'USER' : 'user',
+        'PASSWORD': 'password',
 
     }
 }
