@@ -1,0 +1,3 @@
+@echo off
+echo Setting pyenv local to 3.10.11...
+pyenv local 3.10.11

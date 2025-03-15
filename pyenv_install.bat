@@ -1,0 +1,3 @@
+@echo off
+echo Installing Python 3.10.11...
+pyenv install 3.10.11
