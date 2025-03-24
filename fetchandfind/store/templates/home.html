@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="/admin" target="_blank">Admin Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Our Store!</h1>
+        <p>Your one-stop shop for all your pet needs.</p>
+        <a href="{% url 'product_list' %}" class="btn">Shop Now</a>
+        <a href="{% url 'login' %}" class="btn">Login</a>
+    </section>
+
+
+    <footer>
+        <p>&copy; 2025 FetchAndFind. All rights reserved.</p>
+    </footer>
+</body>
+</html>

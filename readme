@@ -1,0 +1,44 @@
+# Software Engineering Spring 2025 - Group 6
+
+## Project Overview
+
+
+## Team Members
+
+- 
+
+## Project Description
+
+
+
+## Technologies Used
+
+- Programming Language: Python
+- Framework: Django
+- Database: MySQL
+- Tools:  Git
+
+## Installation
+
+To set up the project locally, follow these steps:
+
+1. Clone the repository:
+    ```
+    git clone https://github.com/Cambrian34/Software-engineering-spring-2025--Group-6.git
+    ```
+2. Navigate to the project directory:
+    ```
+    cd Software-engineering-spring-2025--Group-6
+    ```
+3. Install the required dependencies:
+    ```
+    pip install -r requirements.txt
+    ```
+
+## Usage
+
+To run the project, use the following command:
+```
+cd fetchandfind
+python manage.py runserver
+```
