@@ -1,55 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Fetch and Find</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <title>Home</title>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Fetch and Find</h1>
-        </div>
-        <div class="content">
-            <div class="search">
-                <form action="search.php" method="post">
-                    <input type="text" name="search" placeholder="Search for a product">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
-            <div class="products">
-                <h2>Products</h2>
-                <div class="product">
-                    <!--<img src="images/product1.jpg"> -->
-                    <h3>Product 1</h3>
-                    <p>Price: $10</p>
-                    <button>Add to Cart</button>
-                </div>
-                <div class="product">
-                    <!--<img src="images/product2.jpg"> -->
-                    <h3>Product 2</h3>
-                    <p>Price: $20</p>
-                    <button>Add to Cart</button>
-                </div>
-                <div class="product">
-                    <!--<img src="images/product3.jpg"> -->
-                    <h3>Product 3</h3>
-                    <p>Price: $30</p>
-                    <button>Add to Cart</button>
-                </div>
-                <div class="product">
-                    <!--<img src="images/product4.jpg"> -->
-                    <h3>Product 4</h3>
-                    <p>Price: $40</p>
-                    <button>Add to Cart</button>
-                </div>
-            </div>
-        </div>
-        <div class="footer">
-            <p>&copy; 2025 Fetch and Find</p>
-        </div>
-    </div>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="/admin" target="_blank">Admin Login</a></li>
+            </ul>
+        </nav>
+    </header>
 
+    <section class="hero">
+        <h1>Welcome to Our Store!</h1>
+        <p>Your one-stop shop for all your pet needs.</p>
+        <a href="{% url 'product_list' %}" class="btn">Shop Now</a>
+        <a href="{% url 'login' %}" class="btn">Login</a>
+    </section>
+
+
+    <footer>
+        <p>&copy; 2025 FetchAndFind. All rights reserved.</p>
+    </footer>
+</body>
 </html>
