@@ -23,6 +23,7 @@ from django.contrib.auth import views as auth_views
 
 from rest_framework.routers import DefaultRouter
 
+
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'products', views.ProductViewSet)
@@ -44,8 +45,9 @@ urlpatterns = [
     #product list
     path('products/', views.product_list, name='product_list'),
 
+
     
-]
+] + static(settings.STATIC_URL)
 
 # Serve media files in development
 if settings.DEBUG:
