@@ -6,9 +6,13 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+
+
 
 # Create your views here.
-
+@login_required
 def home(request):
     template_n = loader.get_template('home.html')
     return HttpResponse(template_n.render())
@@ -16,6 +20,17 @@ def home(request):
 def login(request):
     template_n = loader.get_template('login.html')
     return HttpResponse(template_n.render())
+
+
+def authView(request):
+ if request.method == "POST":
+  form = UserCreationForm(request.POST or None)
+  if form.is_valid():
+   form.save()
+   return redirect("registration/login.html")
+ else:
+  form = UserCreationForm()
+ return render(request, "registration/signup.html", {"form": form})
 
 def logout(request):
     template_n = loader.get_template('logout.html')
