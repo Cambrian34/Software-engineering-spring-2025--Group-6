@@ -1,60 +1,58 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import Product
+from rest_framework import viewsets
+from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
+from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
 
-# Create your views here.
-
+# Home Page (Requires Login)
+@login_required
 def home(request):
-    template_n = loader.get_template('home.html')
-    return HttpResponse(template_n.render())
+    return render(request, 'home.html')
 
-def login(request):
-    template_n = loader.get_template('login.html')
-    return HttpResponse(template_n.render())
+# Signup View
+def authView(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")  # Redirect to login after signup
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/signup.html", {"form": form})
 
-def logout(request):
-    template_n = loader.get_template('logout.html')
-    return HttpResponse(template_n.render())
+# Logout View 
+def logout_view(request):
+    logout(request)
+    return redirect("login")
 
+# Login View
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            
-            # Authenticate the user
-            user = authenticate(request, username=username, password=password)
-            
-            if user is not None:
-                # Log the user in
-                login(request, user)
-                messages.success(request, "Login successful!")
-                return redirect('home')  # Redirect to the home page (or any other view)
-            else:
-                messages.error(request, "Invalid username or password.")
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, "Login successful!")
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid username or password.")
     else:
-        form = LoginForm()
+        form = AuthenticationForm()
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form})
 
-from django.shortcuts import render
-from .models import Product
-
+# Product List View
 def product_list(request):
-    products = Product.objects.all()  # Query all products
+    products = Product.objects.all()
     return render(request, 'product_list.html', {'products': products})
 
-
-from rest_framework import viewsets
-from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
-from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
-
+# Django REST Framework ViewSets
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
