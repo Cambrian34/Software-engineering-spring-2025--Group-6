@@ -1,24 +1,40 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shop</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/product-styles.css" %}">
+</head>
+   
+<body>
     <header>
         <nav>
-            <ul style="display: flex; list-style-type: none; padding: 0;">
+            <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
+                <li style="margin-right: 30px;"><h1>Fetch & Find</h1></li>
                 <li style="margin-right: 10px;"><a href="{% url 'home' %}">Home</a></li>
                 <li style="margin-right: 10px;"><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="/admin" target="_blank">Admin Login</a></li>
             </ul>
         </nav>
     </header>
+    <div class="product-container">
     {% for product in products %}
-        <div>
+        <div class="product">
             <h2>{{ product.name }}</h2>
             <p>{{ product.description }}</p>
             <p>Price: ${{ product.price }}</p>
-
             {% if product.image %}
                 <img src="{{ product.image.url }}" alt="{{ product.name }}" />
             {% else %}
                 <p>No image available</p>
+            <p>Price: ${{ product.price }}</p>
+
             {% endif %}
         </div>
     {% endfor %}
-</div>
+    </div>
+</body>
+
+</html>

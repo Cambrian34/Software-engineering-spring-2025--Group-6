@@ -1,0 +1,35 @@
+
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    width: 22%;
+    align-items: center;
+    border: solid 2px;
+    padding: 5px;
+    height: 60vh;
+}
+
+.product h2 {
+    font-size: 130%;
+    display: -webkit-box; 
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+.product img {
+    object-fit: contain;
+    width: 40%;
+    height: 20vh;
+    border-radius: 10px;
+}
