@@ -22,16 +22,13 @@
     <div class="product-container">
     {% for product in products %}
         <div class="product">
-            <h2>{{ product.name }}</h2>
-            <p>{{ product.description }}</p>
-            <p>Price: ${{ product.price }}</p>
             {% if product.image %}
                 <img src="{{ product.image.url }}" alt="{{ product.name }}" />
             {% else %}
                 <p>No image available</p>
-            <p>Price: ${{ product.price }}</p>
-
             {% endif %}
+            <h2>{{ product.name }}</h2>
+            <p>Price: ${{ product.price }}</p>
         </div>
     {% endfor %}
     </div>

@@ -8,13 +8,22 @@
     background-color: rgb(255, 255, 255);
 }
 
+header {
+    width: 88%;
+    padding-left: 5%;
+}
+
+header h1 {
+    font-size: 190%;
+}
+
 .product {
     display: flex;
     flex-direction: column;
     width: 22%;
     align-items: center;
     border: solid 2px;
-    padding: 5px;
+    padding: 10px;
     height: 60vh;
 }
 
@@ -25,6 +34,8 @@
     -webkit-box-orient: vertical; 
     overflow: hidden; 
     text-overflow: ellipsis; 
+    height: 4.0em;
+    line-height: 1.4em;
 }
 
 .product img {
@@ -32,4 +43,6 @@
     width: 40%;
     height: 20vh;
     border-radius: 10px;
+    padding-top: 20%;
+    padding-bottom: 20%;
 }
