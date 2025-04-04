@@ -12,9 +12,9 @@
     <header>
         <nav>
             <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
-                <li style="margin-right: 30px;"><h1>Fetch & Find</h1></li>
-                <li style="margin-right: 10px;"><a href="{% url 'home' %}">Home</a></li>
-                <li style="margin-right: 10px;"><a href="{% url 'login' %}">Login</a></li>
+                <li style="margin-right: 80px;"><h1>Fetch & Find</h1></li>
+                <li style="margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
+                <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="/admin" target="_blank">Admin Login</a></li>
             </ul>
         </nav>
@@ -28,7 +28,7 @@
                 <p>No image available</p>
             {% endif %}
             <h2>{{ product.name }}</h2>
-            <p>Price: ${{ product.price }}</p>
+            <p>${{ product.price }}</p>
         </div>
     {% endfor %}
     </div>
