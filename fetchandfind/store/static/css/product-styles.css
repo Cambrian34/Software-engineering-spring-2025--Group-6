@@ -64,3 +64,7 @@ a {
 input {
     width: 170%;
 }
+
+select {
+    font-family: 'Mulish', sans-serif;
+}
