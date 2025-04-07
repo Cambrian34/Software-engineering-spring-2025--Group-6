@@ -47,7 +47,6 @@ def add_to_cart(request, product_id):
     return redirect('home')
 
 
-
 # Signup View
 def authView(request):
     if request.method == "POST":
