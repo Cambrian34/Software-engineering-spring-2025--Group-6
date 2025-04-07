@@ -1,24 +1,46 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shop</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/product-styles.css" %}">
+</head>
+   
+<body>
     <header>
         <nav>
-            <ul style="display: flex; list-style-type: none; padding: 0;">
-                <li style="margin-right: 10px;"><a href="{% url 'home' %}">Home</a></li>
-                <li style="margin-right: 10px;"><a href="{% url 'login' %}">Login</a></li>
-                <li><a href="/admin" target="_blank">Admin Login</a></li>
+            <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
+                <li style="margin-right: 80px;"><h1>Fetch & Find</h1></li>
+                <li style="margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
+                <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
+                <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
+                <form method="get" style="display: flex;">
+                    <input type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
+                    <select name="filter">
+                        <option value="">Filter results</option>
+                        <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
+                        <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+                    </select>
+                    <button type="submit">Go</button>
+                </form>
             </ul>
         </nav>
     </header>
+    <div class="product-container">
     {% for product in products %}
-        <div>
-            <h2>{{ product.name }}</h2>
-            <p>{{ product.description }}</p>
-            <p>Price: ${{ product.price }}</p>
-
+        <div class="product">
             {% if product.image %}
                 <img src="{{ product.image.url }}" alt="{{ product.name }}" />
             {% else %}
                 <p>No image available</p>
             {% endif %}
+            <h2>{{ product.name }}</h2>
+            <p>${{ product.price }}</p>
         </div>
     {% endfor %}
-</div>
+    </div>
+</body>
+
+</html>
