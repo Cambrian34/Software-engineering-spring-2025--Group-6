@@ -55,14 +55,13 @@ class Product(models.Model):
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=0)
     added_at = models.DateTimeField(auto_now_add=True)
     def get_subtotal(self):
         return self.product.get_price() * self.quantity
     def save(self, *args, **kwargs):
         # Ensure the quantity is greater than zero
-        if self.quantity <= 0:
-            raise ValueError("Quantity must be greater than zero.")
+        
         # Refresh the product instance to ensure the stock quantity is up-to-date
         self.product.refresh_from_db()
         if self.quantity > self.product.stock_quantity:
