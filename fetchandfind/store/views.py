@@ -50,6 +50,20 @@ def login_view(request):
 # Product List View
 def product_list(request):
     products = Product.objects.all()
+
+    # Handle search
+    search_query = request.GET.get('search')
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+
+    # Handle filtering
+    filter_option = request.GET.get('filter')
+    if filter_option == 'price-high':
+        products = products.order_by('-price')
+    elif filter_option == 'price-low':
+        products = products.order_by('price')
+    
+
     return render(request, 'product_list.html', {'products': products})
 
 # Django REST Framework ViewSets

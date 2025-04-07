@@ -16,13 +16,15 @@
                 <li style="margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
                 <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
                 <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
-                <li style="margin-right: 150px;"><input type="test" placeholder="search" id="searchBar"></input></li>
-                <li style="margin-right: 40px;"><select>
-                    <option value="filter results" disabled selected>filter results</option>
-                    <option id="price-high-to-low">Price: high to low</option>
-                    <option id="price-low-to-high">Price: low to high</option>
-                    <option id="available">available</option>
-                </select></li>
+                <form method="get" style="display: flex;">
+                    <input type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
+                    <select name="filter">
+                        <option value="">Filter results</option>
+                        <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
+                        <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+                    </select>
+                    <button type="submit">Go</button>
+                </form>
             </ul>
         </nav>
     </header>
