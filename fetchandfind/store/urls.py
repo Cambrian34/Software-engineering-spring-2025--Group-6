@@ -11,6 +11,7 @@ urlpatterns = [
  path("signup/", authView, name="authView"),
  path("accounts/", include("django.contrib.auth.urls")),
  path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
+ path('products/<int:product_id>/', views.product_detail, name='product_detail'),
 
 
 ]
