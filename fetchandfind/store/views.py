@@ -1,60 +1,120 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse,HttpResponseBadRequest
 from django.template import loader
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import Product
+from rest_framework import viewsets
+from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
+from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
+#admin 
+from .forms import CustomUserCreationForm
 
-# Create your views here.
 
+# Home Page (Requires Login)
+@login_required
 def home(request):
-    template_n = loader.get_template('home.html')
-    return HttpResponse(template_n.render())
+    return render(request, 'home.html')
 
-def login(request):
-    template_n = loader.get_template('login.html')
-    return HttpResponse(template_n.render())
+@login_required
+def add_to_cart(request, product_id):
+    if request.method == "POST":
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return HttpResponseBadRequest("Product not found")
+        
+        # Get or create the CartItem for the current user
+        # Ensure that 'user=request.user' is properly passed to associate it with the logged-in user
+        cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
 
-def logout(request):
-    template_n = loader.get_template('logout.html')
-    return HttpResponse(template_n.render())
+        quantity = int(request.POST.get("quantity", 1))  # Fallback to 1 if not provided
+        if quantity <= 0:
+            messages.error(request, "Invalid quantity.")
+            return redirect("product_detail", product_id=product.id)
+    
+        cart_item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            product=product,
+            defaults={'quantity': quantity}
+        )
+        if not created:
+            cart_item.quantity += quantity
+        cart_item.save()
+        return redirect('home')  # Redirect to the home page after adding to cart
+    return redirect('home')
 
+
+
+# Signup View
+def authView(request):
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")  # Redirect to login after signup
+    else:
+        form = CustomUserCreationForm()
+    return render(request, "registration/signup.html", {"form": form})
+
+
+# Logout View 
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+# Login View
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            
-            # Authenticate the user
-            user = authenticate(request, username=username, password=password)
-            
-            if user is not None:
-                # Log the user in
-                login(request, user)
-                messages.success(request, "Login successful!")
-                return redirect('home')  # Redirect to the home page (or any other view)
-            else:
-                messages.error(request, "Invalid username or password.")
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, "Login successful!")
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid username or password.")
     else:
-        form = LoginForm()
+        form = AuthenticationForm()
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form})
 
-from django.shortcuts import render
-from .models import Product
-
+# Product List View
 def product_list(request):
-    products = Product.objects.all()  # Query all products
+    products = Product.objects.all()
+
+    # Handle search
+    search_query = request.GET.get('search')
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+
+    # Handle filtering
+    filter_option = request.GET.get('filter')
+    if filter_option == 'price-high':
+        products = products.order_by('-price')
+    elif filter_option == 'price-low':
+        products = products.order_by('price')
+    
+
     return render(request, 'product_list.html', {'products': products})
 
+#Cart View
+def cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    subtotal = sum(item.get_subtotal() for item in cart_items)
+    return render(request, 'cart.html', {
+        'cart_items': cart_items,
+        'subtotal': subtotal
+    })
 
-from rest_framework import viewsets
-from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
-from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
 
+
+#logs admin actions
+def log_admin_action(admin_user, action_text):
+    AdminLog.objects.create(admin=admin_user, action=action_text)
+# Django REST Framework ViewSets
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer

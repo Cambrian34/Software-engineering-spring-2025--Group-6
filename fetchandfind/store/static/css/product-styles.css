@@ -1,0 +1,70 @@
+
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+}
+
+header {
+    width: 88%;
+    padding-left: 5%;
+}
+
+header h1 {
+    font-size: 190%;
+    font-family: 'Mulish', sans-serif;
+    transition: 0.3s all ease-in-out;
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    width: 22%;
+    align-items: center;
+    border: solid 5px #F0F2FB;;
+    padding: 10px;
+    height: 60vh;
+}
+
+.product h2 {
+    font-size: 130%;
+    display: -webkit-box; 
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    height: 4.0em;
+    line-height: 1.4em;
+    font-family: 'Mulish', sans-serif;
+
+}
+
+.product img {
+    object-fit: contain;
+    width: 40%;
+    height: 20vh;
+    border-radius: 10px;
+    padding-top: 20%;
+    padding-bottom: 20%;
+}
+
+p {
+    font-family: 'Mulish', sans-serif;
+
+}
+
+a {
+    font-family: 'Mulish', sans-serif;
+    
+}
+
+input {
+    width: 170%;
+}
+
+select {
+    font-family: 'Mulish', sans-serif;
+}
