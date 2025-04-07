@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth import authenticate, login, logout
@@ -65,6 +65,10 @@ def product_list(request):
     
 
     return render(request, 'product_list.html', {'products': products})
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    return render(request, 'product_detail.html', {'product': product})
 
 # Django REST Framework ViewSets
 class UserViewSet(viewsets.ModelViewSet):
