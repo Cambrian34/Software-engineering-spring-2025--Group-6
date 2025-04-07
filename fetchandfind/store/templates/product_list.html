@@ -38,6 +38,11 @@
             {% endif %}
             <h2>{{ product.name }}</h2>
             <p>${{ product.price }}</p>
+            <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit">Add to Cart</button>
+            </form>
         </div>
     {% endfor %}
     </div>
