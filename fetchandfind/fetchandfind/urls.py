@@ -32,7 +32,6 @@ urlpatterns = [
      path("cart/", views.cart, name="cart"),
 
 
-
     # API routes
     path('api/', include(router.urls)),
 
