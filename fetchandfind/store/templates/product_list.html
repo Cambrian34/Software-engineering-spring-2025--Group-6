@@ -30,15 +30,17 @@
     </header>
     <div class="product-container">
     {% for product in products %}
-        <div class="product">
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" />
-            {% else %}
-                <p>No image available</p>
-            {% endif %}
-            <h2>{{ product.name }}</h2>
-            <p>${{ product.price }}</p>
-        </div>
+            <div class="product">
+                <a href="{% url 'store:product_detail' product.id %}" class="product-link" style="text-decoration: none; color: inherit;">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                    <h2>{{ product.name }}</h2>
+                    <p>${{ product.price }}</p>
+                </a>
+            </div>
     {% endfor %}
     </div>
 </body>
