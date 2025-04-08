@@ -98,6 +98,9 @@ def product_list(request):
     
 
     return render(request, 'product_list.html', {'products': products})
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    return render(request, 'product_detail.html', {'product': product})
 
 #Cart View
 def cart(request):
