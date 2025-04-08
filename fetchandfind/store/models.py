@@ -30,6 +30,15 @@ class Product(models.Model):
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Returns the sale price if the product is on sale, 
+    # otherwise returns the regular price.
+    # Should be used during checkout, not on product_detail page 
+    # (Keeping discounts soley tied to coupons, for simplicity)
+    def get_price(self):
+        if self.is_on_sale and self.sale_price:
+            return self.sale_price
+        return self.price
 # Shopping Cart Model
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
