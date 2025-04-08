@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="cart-container" style="max-width: 800px; margin: auto; padding: 20px;">
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li><a href="/admin" target="_blank">Admin Login</a></li>
+                <li><a href="{% url 'cart' %}">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h2>Your Shopping Cart</h2>
+    
+
+    {% if cart_items %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="text-align: left;">Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr style="border-top: 1px solid #ccc;">
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px; margin-right: 10px;">
+                            {% endif %}
+                            {{ item.product.name }}
+                        </div>
+                    </td>
+                    <td>${{ item.product.get_price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.get_subtotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: right; margin-top: 20px;">
+            <strong>Total: ${{ subtotal }}</strong>
+        </div>
+
+       
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

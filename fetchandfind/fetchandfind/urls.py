@@ -21,10 +21,16 @@ urlpatterns = [
 
     
     # Authentication views
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+
+    #path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path("signup/", views.authView, name="signup"),
     path('products/', views.product_list, name='product_list'), 
+    path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    #path('products/', include('store.urls')), 
+     path("cart/", views.cart, name="cart"),
+
 
     # API routes
     path('api/', include(router.urls)),

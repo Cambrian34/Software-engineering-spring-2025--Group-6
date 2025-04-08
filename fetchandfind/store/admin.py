@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
+
 
 # Register your models here.
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
