@@ -30,17 +30,20 @@
     </header>
     <div class="product-container">
     {% for product in products %}
-            <div class="product">
-                <a href="{% url 'store:product_detail' product.id %}" class="product-link" style="text-decoration: none; color: inherit;">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" />
-                    {% else %}
-                        <p>No image available</p>
-                    {% endif %}
-                    <h2>{{ product.name }}</h2>
-                    <p>${{ product.price }}</p>
-                </a>
-            </div>
+        <div class="product">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+            <h2>{{ product.name }}</h2>
+            <p>${{ product.price }}</p>
+            <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
     {% endfor %}
     </div>
 </body>
