@@ -1,0 +1,40 @@
+
+
+.content-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 5%;
+    gap: 5%;
+}
+
+.product-img {
+    object-fit: cover;
+    width: 30%;
+    height: auto;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    background-color: white;
+    margin-left: 8%;
+    padding-left: 8%;
+    border-radius: 3%;
+    border: solid 3px rgb(159, 158, 158, .8);
+}
+
+
+
+.product-info {
+    width: 40%;
+    height: 50vh;
+}
+
+#back-link {
+    font-size: 1.5vw;
+    color: rgb(79, 79, 79);
+    margin-left: 5%;
+}
+
+a {
+    color: white;
+}
