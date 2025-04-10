@@ -12,6 +12,12 @@ body {
     font-style: bold; 
 }
 
+.logo {
+    width: 5vw;
+    height: auto;
+    margin-right: 1vw;
+}
+
 button {
     transition: 0.3s all ease-in-out;
     cursor: pointer;
@@ -29,8 +35,7 @@ button {
 
 header {
     margin-top: 0;
-    width: 95%;
-    padding-left: 5%;
+    width: 100%;
     background-color: rgb(46, 76, 137);
     height: 13vh;
     margin: 0;
@@ -50,7 +55,7 @@ header h1 {
     height: 5vh; 
     border-radius: 15px;
     border: none;
-    margin-right: 2vw;
+    margin-right: 1vw;
     padding-left: 2%;
     font-size: 110%;
 }

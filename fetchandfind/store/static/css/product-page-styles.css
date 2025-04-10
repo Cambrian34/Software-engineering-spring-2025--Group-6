@@ -38,3 +38,37 @@
 a {
     color: white;
 }
+
+.purchase-button {
+    width: 25vh;
+    height: 4vh;
+    background-color: rgb(210, 119, 119);
+}
+
+.favorite-button {
+    position: absolute;
+    top: 14rem;
+    left: 9rem;
+    width: 3.5vw;
+    height: 4.5vh;
+    background-color: rgb(210, 119, 119);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.favorite-icon {
+    width: 2vw;
+    height: 3vh;
+    filter: invert(1);
+}
+
+.favorite-button:hover {
+    background-color: rgb(239, 139, 139);
+    transform: scale(1.05)
+}
+
+.purchase-button:hover {
+    background-color: rgb(239, 139, 139);
+    transform: scale(1.05)
+}

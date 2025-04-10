@@ -10,6 +10,7 @@
 <header>
     <nav>
         <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
+            <li><img src="../../media/logo.png" class="logo"/></li>
             <li style="margin-right: 40px;"><h1>Fetch & Find</h1></li>
             <form method="get" style="display: flex;" id="filterForm">
                 <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
@@ -30,6 +31,9 @@
     <div class="content-container">
         {% if product.image %}
         <div class="product-img">
+            <button class="favorite-button" type="submit">
+                <img src="../../media/favorite-icon.png" class="favorite-icon"/>
+            </button>
             <img src="{{ product.image.url }}" width="300">
         </div>
         <div class="product-info">
@@ -37,6 +41,8 @@
             <p>{{ product.description }}</p>
             <p><strong>Price:</strong> ${{ product.price }}</p>
             <p><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
+            <button class="purchase-button" id="add-to-cart-button">add to cart</button>
+            <button class="purchase-button" id="buy-now-button">buy now</button>
         </div>
         {% endif %}
     </div>
