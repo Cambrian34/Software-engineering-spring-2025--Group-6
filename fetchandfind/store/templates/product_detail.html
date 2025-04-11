@@ -2,18 +2,51 @@
 <html>
 <head>
     <title>{{ product.name }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/product-page-styles.css" %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/header.css" %}">
 </head>
+<header>
+    <nav>
+        <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
+            <li><img src="../../media/logo.png" class="logo"/></li>
+            <li style="margin-right: 40px;"><h1>Fetch & Find</h1></li>
+            <form method="get" style="display: flex;" id="filterForm">
+                <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
+                <select id="filter-dropdown" name="filter" onchange="document.getElementById('filterForm').submit();">
+                    <option value="" >Filter results</option>
+                    <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
+                    <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+                </select>
+            </form>
+            <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
+            <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
+            <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
+        </ul>
+    </nav>
+</header>
 <body>
-    <h1>{{ product.name }}</h1>
-    <p>{{ product.description }}</p>
-    <p><strong>Price:</strong> ${{ product.price }}</p>
-    <p><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
-    
-    {% if product.image %}
-        <img src="{{ product.image.url }}" width="300">
-    {% endif %}
+    <a id="back-link" href="{% url 'product_list' %}">&lt;-- Back</a>
+    <div class="content-container">
+        {% if product.image %}
+        <div class="product-img">
+            <button class="favorite-button" type="submit">
+                <img src="../../media/favorite-icon.png" class="favorite-icon"/>
+            </button>
+            <img src="{{ product.image.url }}" width="300">
+        </div>
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <p>{{ product.description }}</p>
+            <p><strong>Price:</strong> ${{ product.price }}</p>
+            <p><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
+            <button class="purchase-button" id="add-to-cart-button">add to cart</button>
+            <button class="purchase-button" id="buy-now-button">buy now</button>
+        </div>
+        {% endif %}
+    </div>
     
     <br><br>
-    <a href="{% url 'product_list' %}">Back to Products</a>
 </body>
 </html>
