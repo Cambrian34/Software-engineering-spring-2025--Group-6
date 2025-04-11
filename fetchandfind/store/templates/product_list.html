@@ -6,28 +6,38 @@
     <title>shop</title>
     {% load static %}
     <link rel="stylesheet" href="{% static "css/product-styles.css" %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/header.css" %}">
 </head>
    
 <body>
     <header>
         <nav>
             <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
-                <li style="margin-right: 80px;"><h1>Fetch & Find</h1></li>
-                <li style="margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
-                <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
-                <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
+                <li><img src="../../media/logo.png" class="logo"/></li>
+                <li style="margin-right: 40px;"><h1>Fetch & Find</h1></li>
                 <form method="get" style="display: flex;" id="filterForm">
-                    <input type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
-                    <select name="filter" onchange="document.getElementById('filterForm').submit();">
+                    <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
+                    <select id="filter-dropdown" name="filter" onchange="document.getElementById('filterForm').submit();">
                         <option value="" >Filter results</option>
                         <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
                         <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
                     </select>
-                    <button type="submit">Go</button>
                 </form>
+                <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
+                <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
+                <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
             </ul>
         </nav>
     </header>
+    <div id="sort-bar">
+        <button class="filter-button" id="home-button">home</button>
+        <button class="filter-button" id="dogs-button">dogs</button>
+        <button class="filter-button" id="cats-button">cats</button>
+        <button class="filter-button" id="food-button">food</button>
+        <button class="filter-button" id="toys-button">toys</button>
+        <button class="filter-button" id="supplied-button">supplies</button>
+    </div>
     <div class="product-container">
     {% for product in products %}
         <div class="product">
@@ -42,7 +52,10 @@
             <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ product.id }}">
-                <button type="submit">Add to Cart</button>
+                <div class="product-buttons">
+                    <button class="add-to-cart-button" type="submit">Add to Cart</button>
+                    <button class="favorite-button" type="submit"><img src="../media/favorite-icon.png" class="favorite-icon"></img></button>
+                </div>
             </form>
         </div>
     {% endfor %}
