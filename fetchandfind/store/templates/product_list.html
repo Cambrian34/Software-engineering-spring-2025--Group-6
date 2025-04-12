@@ -27,6 +27,8 @@
                 <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
                 <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
                 <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
+                <li style="margin-right: 40px;" ><a href="{% url 'cart' %}">Cart</a></li>
+
             </ul>
         </nav>
     </header>
@@ -54,7 +56,7 @@
                 <input type="hidden" name="product_id" value="{{ product.id }}">
                 <div class="product-buttons">
                     <button class="add-to-cart-button" type="submit">Add to Cart</button>
-                    <button class="favorite-button" type="submit"><img src="../media/favorite-icon.png" class="favorite-icon"></img></button>
+                    <button class="favorite-button" type="submit" title="Add to Favorites"><img src="../media/favorite-icon.png" class="favorite-icon" alt="Favorite Icon"></img></button>
                 </div>
             </form>
         </div>
