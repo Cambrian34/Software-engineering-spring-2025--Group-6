@@ -43,8 +43,7 @@ def add_to_cart(request, product_id):
         if not created:
             cart_item.quantity += quantity
         cart_item.save()
-        return redirect('/products/')  # Redirect to the product list or cart page
-    return redirect('/products/') 
+        return redirect(request.META.get('HTTP_REFERER', '/products/'))  # Redirect back to the referring page or product list
 
 
 # Signup View
