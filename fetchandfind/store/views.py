@@ -16,7 +16,7 @@ from .forms import CustomUserCreationForm
 # Home Page (Requires Login)
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    return redirect('/products/') 
 
 @login_required
 def add_to_cart(request, product_id):
@@ -43,9 +43,8 @@ def add_to_cart(request, product_id):
         if not created:
             cart_item.quantity += quantity
         cart_item.save()
-        return redirect('home')  # Redirect to the home page after adding to cart
-    return redirect('home')
-
+        return redirect('/products/')  # Redirect to the product list or cart page
+    return redirect('/products/') 
 
 
 # Signup View
@@ -99,6 +98,9 @@ def product_list(request):
     
 
     return render(request, 'product_list.html', {'products': products})
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    return render(request, 'product_detail.html', {'product': product})
 
 #Cart View
 def cart(request):

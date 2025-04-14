@@ -35,7 +35,7 @@ class User(AbstractUser):
     
 # Product Model
 class Product(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=252)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock_quantity = models.PositiveIntegerField()
@@ -43,9 +43,15 @@ class Product(models.Model):
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    # Returns the sale price if the product is on sale, 
+    # otherwise returns the regular price.
+    # Should be used during checkout, not on product_detail page 
+    # (Keeping discounts soley tied to coupons, for simplicity)
+    
     def get_price(self):
-        return self.sale_price if self.is_on_sale and self.sale_price else self.price
+        if self.is_on_sale and self.sale_price:
+            return self.sale_price
+        return self.price
 
     def __str__(self):
         return self.name
@@ -55,14 +61,13 @@ class Product(models.Model):
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=0)
     added_at = models.DateTimeField(auto_now_add=True)
     def get_subtotal(self):
         return self.product.get_price() * self.quantity
     def save(self, *args, **kwargs):
         # Ensure the quantity is greater than zero
-        if self.quantity <= 0:
-            raise ValueError("Quantity must be greater than zero.")
+        
         # Refresh the product instance to ensure the stock quantity is up-to-date
         self.product.refresh_from_db()
         if self.quantity > self.product.stock_quantity:

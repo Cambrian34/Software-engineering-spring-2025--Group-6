@@ -29,6 +29,7 @@ urlpatterns = [
     path('products/', views.product_list, name='product_list'), 
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     #path('products/', include('store.urls')), 
+     path("cart/", views.cart, name="cart"),
 
 
     # API routes
