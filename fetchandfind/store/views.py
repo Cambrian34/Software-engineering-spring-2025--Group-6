@@ -14,7 +14,6 @@ from .forms import CustomUserCreationForm
 
 
 # Home Page (Requires Login)
-@login_required
 def home(request):
     return redirect('/products/') 
 
@@ -98,11 +97,13 @@ def product_list(request):
     
 
     return render(request, 'product_list.html', {'products': products})
+
 def product_detail(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     return render(request, 'product_detail.html', {'product': product})
 
 #Cart View
+@login_required
 def cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
     subtotal = sum(item.get_subtotal() for item in cart_items)
@@ -116,6 +117,8 @@ def cart(request):
 #logs admin actions
 def log_admin_action(admin_user, action_text):
     AdminLog.objects.create(admin=admin_user, action=action_text)
+
+
 # Django REST Framework ViewSets
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
