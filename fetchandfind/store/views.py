@@ -11,6 +11,7 @@ from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, 
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
 #admin 
 from .forms import CustomUserCreationForm
+from django.views.decorators.http import require_POST
 
 
 # Home Page (Requires Login)
@@ -111,6 +112,22 @@ def cart(request):
         'cart_items': cart_items,
         'subtotal': subtotal
     })
+
+#delete cart item
+@login_required
+@require_POST
+def delete_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+        messages.info(request, "Item quantity decreased.")
+    else:
+        cart_item.delete()
+        messages.success(request, "Item removed from cart.")
+
+    return redirect('cart')
 
 
 

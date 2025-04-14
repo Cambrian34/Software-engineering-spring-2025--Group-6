@@ -30,6 +30,8 @@ urlpatterns = [
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     #path('products/', include('store.urls')), 
      path("cart/", views.cart, name="cart"),
+    path('cart/delete/<int:item_id>/', views.delete_cart_item, name='delete_cart_item'),
+
 
 
     # API routes
