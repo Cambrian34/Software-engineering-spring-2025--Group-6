@@ -41,7 +41,7 @@
             <p>{{ product.description }}</p>
             <p><strong>Price:</strong> ${{ product.price }}</p>
             <p><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
-            <button class="purchase-button" id="add-to-cart-button">add to cart</button>
+            <button class="purchase-button" id="add-to-cart-button" action="{% url 'add_to_cart' product_id=product.id %}">add to cart</button>
             <button class="purchase-button" id="buy-now-button">buy now</button>
         </div>
         {% endif %}
