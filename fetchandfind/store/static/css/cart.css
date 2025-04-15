@@ -1,3 +1,5 @@
-.product {
-    width: 80vw;
+body {
+    display: flex;
+    flex-direction: column;
+    
 }
