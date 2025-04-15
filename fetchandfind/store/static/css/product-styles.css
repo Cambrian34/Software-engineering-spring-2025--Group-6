@@ -22,8 +22,8 @@
  }
 
  .filter-button:hover {
-    background-color: rgb(46, 75, 132);
-    font-size: 130%;
+    font-size: 115%;
+    text-decoration: underline;
 }
  
 .product {

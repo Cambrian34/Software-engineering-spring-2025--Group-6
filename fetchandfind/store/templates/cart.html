@@ -1,6 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+
 {% extends "base.html" %}
 {% load static %}
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cart</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/cart.css" %}">
+</head>
 {% block content %}
 <div class="cart-container" style="max-width: 800px; margin: auto; padding: 20px;">
     <header>
@@ -18,7 +27,7 @@
     
 
     {% if cart_items %}
-        <table style="width: 100%; border-collapse: collapse;">
+        <table class="product" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th style="text-align: left;">Product</th>
