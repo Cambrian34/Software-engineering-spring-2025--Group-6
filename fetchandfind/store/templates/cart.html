@@ -44,7 +44,7 @@
     </nav>
 </header>
 
-<div class="cart-container" style="max-width: 800px; margin: auto; padding: 20px;">
+<div class="cart-container" style="max-width: 1000px; margin: auto; max-height: 50vh">
     <h2>Your Shopping Cart</h2>
     
 
@@ -52,26 +52,27 @@
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>
-                    <th style="text-align: left;">Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
+                    <th id="product-header" style="text-align: left;">Product</th>
+                    <th id="product-name-header"></th>
+                    <th id="price-header;">Price</th>
+                    <th id="quantity-header;">Quantity</th>
+                    <th id="subtotal-header;">Subtotal</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in cart_items %}
                 <tr style="border-top: 1px solid #ccc;">
-                    <td>
+                    <td id="product">
                         <div style="display: flex; align-items: center;">
                             {% if item.product.image %}
-                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px; margin-right: 10px;">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;">
                             {% endif %}
-                            {{ item.product.name }}
+                            <td id="name">{{ item.product.name }}</td>
                         </div>
                     </td>
-                    <td>${{ item.product.get_price }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>${{ item.get_subtotal }}</td>
+                    <td id="price">${{ item.product.get_price }}</td>
+                    <td id="quantity">{{ item.quantity }}</td>
+                    <td id="subtotal">${{ item.get_subtotal }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

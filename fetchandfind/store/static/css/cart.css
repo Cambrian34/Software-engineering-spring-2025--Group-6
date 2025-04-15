@@ -1,5 +1,27 @@
 body {
     display: flex;
     flex-direction: column;
-    
 }
+
+table {
+    margin-top: 3vh;
+}
+
+td {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+#product-header {
+    width: 10%;
+}
+
+#product-name-header {
+    width: 42%;
+}
+
+th {
+    text-align: left;
+}
+
+
