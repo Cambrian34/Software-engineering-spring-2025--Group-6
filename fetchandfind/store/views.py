@@ -11,10 +11,10 @@ from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, 
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
 #admin 
 from .forms import CustomUserCreationForm
+from django.views.decorators.http import require_POST
 
 
 # Home Page (Requires Login)
-@login_required
 def home(request):
     return redirect('/products/') 
 
@@ -43,8 +43,7 @@ def add_to_cart(request, product_id):
         if not created:
             cart_item.quantity += quantity
         cart_item.save()
-        return redirect('/products/')  # Redirect to the product list or cart page
-    return redirect('/products/') 
+        return redirect(request.META.get('HTTP_REFERER', '/products/'))  # Redirect back to the referring page or product list
 
 
 # Signup View
@@ -98,11 +97,13 @@ def product_list(request):
     
 
     return render(request, 'product_list.html', {'products': products})
+
 def product_detail(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     return render(request, 'product_detail.html', {'product': product})
 
 #Cart View
+@login_required
 def cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
     subtotal = sum(item.get_subtotal() for item in cart_items)
@@ -111,11 +112,36 @@ def cart(request):
         'subtotal': subtotal
     })
 
+#delete cart item
+@login_required
+@require_POST
+def delete_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+        messages.info(request, "Item quantity decreased.")
+    else:
+        cart_item.delete()
+        messages.success(request, "Item removed from cart.")
+
+    return redirect('cart')
+
 
 
 #logs admin actions
 def log_admin_action(admin_user, action_text):
     AdminLog.objects.create(admin=admin_user, action=action_text)
+
+
+# View the user's orders
+@login_required
+def user_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by('-order_date')
+    return render(request, 'user_orders.html', {'orders': orders})
+
+
 # Django REST Framework ViewSets
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
