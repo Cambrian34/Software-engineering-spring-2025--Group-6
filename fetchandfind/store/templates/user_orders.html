@@ -1,18 +1,37 @@
-<h1>My Orders</h1>
+<h1>Your Orders</h1>
 
-{% if orders %}
-  {% for order in orders %}
-    <div class="order-card">
-      <h3>Order #{{ order.id }}</h3>
-      <p>Status: {{ order.status|title }}</p>
-      <p>Order Date: {{ order.order_date|date:"F j, Y, g:i a" }}</p>
-      <p>Total Price: ${{ order.total_price }}</p>
-      <p>Tax: ${{ order.tax }}</p>
-      <p>Discount Applied: ${{ order.discount_applied }}</p>
-      <p><strong>Final Price: ${{ order.final_price }}</strong></p>
-    </div>
-    <hr>
-  {% endfor %}
-{% else %}
-  <p>You have no orders yet.</p>
-{% endif %}
+{% for order in orders %}
+  <div class="order">
+    <h2>Order #{{ order.id }} — {{ order.order_date|date:"M d, Y H:i" }}</h2>
+    <p>Status: {{ order.status }}</p>
+    <p>Total: ${{ order.final_price }}</p>
+
+    <h3>Items:</h3>
+    <ul>
+      {% for item in order.orderitem_set.all %}
+        <li style="margin-bottom: 15px;">
+          <div style="display: flex; align-items: center;">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="100" style="margin-right: 15px; object-fit: cover;">
+            {% else %}
+              <div style="width: 100px; height: 100px; background-color: #eee; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                No image
+              </div>
+            {% endif %}
+            <div>
+              <strong>{{ item.product.name }}</strong><br>
+              Quantity: {{ item.quantity }}<br>
+              Price per item: ${{ item.price_at_purchase }}<br>
+              Subtotal: ${{ item.subtotal }}
+            </div>
+          </div>
+        </li>
+      {% empty %}
+        <li>No items found in this order.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <hr>
+{% empty %}
+  <p>You haven't placed any orders yet.</p>
+{% endfor %}

@@ -137,8 +137,9 @@ def log_admin_action(admin_user, action_text):
 
 # View the user's orders
 @login_required
+@login_required
 def user_orders(request):
-    orders = Order.objects.filter(user=request.user).order_by('-order_date')
+    orders = Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date')
     return render(request, 'user_orders.html', {'orders': orders})
 
 
