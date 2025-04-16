@@ -115,7 +115,7 @@ def cart(request):
 #delete cart item
 @login_required
 @require_POST
-def delete_cart_item(request, item_id):
+def decrememt_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
 
     if cart_item.quantity > 1:
@@ -128,9 +128,31 @@ def delete_cart_item(request, item_id):
 
     return redirect('cart')
 
+def increment_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    cart_item.quantity += 1
+    cart_item.save()
+    messages.info(request, "Item quantity increased.")
+    return redirect('cart')
+
+#delete
+@login_required
+def delete_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    cart_item.delete()
+    messages.success(request, "Item removed from cart.")
+    return redirect('cart')
+
+
+#checkout , tax rate is 8.5
+#can bundle discount code with checkout 
+#@login_required
+#def checkout(request):
+
 
 
 #logs admin actions
+@login_required
 def log_admin_action(admin_user, action_text):
     AdminLog.objects.create(admin=admin_user, action=action_text)
 
