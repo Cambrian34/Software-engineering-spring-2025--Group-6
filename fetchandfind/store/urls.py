@@ -13,5 +13,6 @@ urlpatterns = [
  path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
  path('products/<int:product_id>/', views.product_detail, name='product_detail'),
  path("cart/", views.cart, name="cart"),
+ path('user-orders/', views.user_orders, name='user_orders')
 
 ]
