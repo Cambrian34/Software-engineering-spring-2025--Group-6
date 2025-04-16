@@ -65,7 +65,7 @@
                     <td id="product">
                         <div style="display: flex; align-items: center;">
                             {% if item.product.image %}
-                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;">
+                                <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
                             {% endif %}
                             <td id="name">{{ item.product.name }}</td>
                         </div>
