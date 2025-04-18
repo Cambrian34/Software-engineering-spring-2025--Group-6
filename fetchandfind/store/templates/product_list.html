@@ -22,7 +22,10 @@
                         <option value="" >Filter results</option>
                         <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
                         <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+                        <option value="alpha-asc" {% if request.GET.filter == 'alpha-asc' %}selected{% endif %}>Name: A to Z</option>
+                        <option value="alpha-desc" {% if request.GET.filter == 'alpha-desc' %}selected{% endif %}>Name: Z to A</option>
                     </select>
+                        <input type="hidden" name="category" id="categoryInput" value="{{ request.GET.category }}">
                 </form>
                 <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
                 <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
@@ -37,13 +40,23 @@
     </header>
     <div id="sort-bar">
         <button class="filter-button" onclick="window.location.href='{% url 'store:user_orders' %}'">Orders</button>
-        <button class="filter-button" id="home-button">home</button>
-        <button class="filter-button" id="dogs-button">dogs</button>
-        <button class="filter-button" id="cats-button">cats</button>
-        <button class="filter-button" id="food-button">food</button>
-        <button class="filter-button" id="toys-button">toys</button>
-        <button class="filter-button" id="supplied-button">supplies</button>
+        <button class="filter-button" type="button" onclick="submitCategory('dogs')">dogs</button>
+        <button class="filter-button" type="button" onclick="submitCategory('cats')">cats</button>
+        <button class="filter-button" type="button" onclick="submitCategory('food')">food</button>
+        <button class="filter-button" type="button" onclick="submitCategory('toys')">toys</button>
+        <button class="filter-button" type="button" onclick="submitCategory('supplies')">supplies</button>
     </div>
+
+    <!-- Lets us modify the category form before we submit it, which allows us
+     to reload the page with all of our filters added to the URL as paramaters
+     -->
+     <script>
+        function submitCategory(category) {
+            document.getElementById('categoryInput').value = category;
+            document.getElementById('filterForm').submit();
+        }
+    </script>
+
     <div class="product-container">
     {% for product in products %}
         <div class="product">

@@ -48,16 +48,17 @@
     color: white;
  }
  
-.product h2 {
-    font-size: 130%;
-    display: -webkit-box; 
-    -webkit-line-clamp: 3; 
-    -webkit-box-orient: vertical; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    height: 4.0em;
-    line-height: 1.4em;
-
+ .product h2 {
+    font-size: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+    height: 2.4em;
+    margin: 0.5em 0;
+    text-align: center;
 }
 
 .product img {
@@ -122,4 +123,8 @@ input {
     height: 100%;
     text-decoration: none;
     color: inherit;
+}
+
+body {
+    background-color: pink;
 }
