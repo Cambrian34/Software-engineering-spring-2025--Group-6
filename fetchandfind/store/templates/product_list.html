@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>shop</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/product-styles.css' %}">
+    <link rel="stylesheet" href="{% static "css/product-styles.css" %}">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static "css/header.css" %}">
 </head>
    
 <body>
@@ -19,46 +19,27 @@
                 <form method="get" style="display: flex;" id="filterForm">
                     <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
                     <select id="filter-dropdown" name="filter" onchange="document.getElementById('filterForm').submit();">
-                        <option value="">Filter results</option>
+                        <option value="" >Filter results</option>
                         <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
                         <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
-                        <option value="alpha-asc" {% if request.GET.filter == 'alpha-asc' %}selected{% endif %}>Name: A to Z</option>
-                        <option value="alpha-desc" {% if request.GET.filter == 'alpha-desc' %}selected{% endif %}>Name: Z to A</option>
                     </select>
-                    <input type="hidden" name="category" id="categoryInput" value="{{ request.GET.category }}">
                 </form>
-                
                 <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
                 <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
                 <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
-                <li style="margin-right: 40px;"><a href="{% url 'cart' %}">Cart</a></li>
-                <!-- Adding this to the navigation bar currently messes up the
-                 page's alignment. But the page is accessible through /user-orders/
-                <li style="margin-right: 40px;"><a href="{% url 'store:user_orders' %}">Orders</a></li>
-                -->
+                <li style="margin-right: 40px;" ><a href="{% url 'cart' %}">Cart</a></li>
+
             </ul>
         </nav>
     </header>
     <div id="sort-bar">
-        <button class="filter-button" type="button" onclick="location.href='{% url 'store:user_orders' %}';">Orders</button>
-        <a href="{% url 'product_list' %}" class="filter-button">Home</a>
-        <button class="filter-button" type="button" onclick="submitCategory('dogs')">dogs</button>
-        <button class="filter-button" type="button" onclick="submitCategory('cats')">cats</button>
-        <button class="filter-button" type="button" onclick="submitCategory('food')">food</button>
-        <button class="filter-button" type="button" onclick="submitCategory('toys')">toys</button>
-        <button class="filter-button" type="button" onclick="submitCategory('supplies')">supplies</button>
+        <button class="filter-button" id="home-button">home</button>
+        <button class="filter-button" id="dogs-button">dogs</button>
+        <button class="filter-button" id="cats-button">cats</button>
+        <button class="filter-button" id="food-button">food</button>
+        <button class="filter-button" id="toys-button">toys</button>
+        <button class="filter-button" id="supplied-button">supplies</button>
     </div>
-
-    <!-- Lets us modify the category form before we submit it, which allows us
-     to reload the page with all of our filters added to the URL as paramaters
-     -->
-    <script>
-        function submitCategory(category) {
-            document.getElementById('categoryInput').value = category;
-            document.getElementById('filterForm').submit();
-        }
-    </script>
-
     <div class="product-container">
     {% for product in products %}
         <div class="product">
