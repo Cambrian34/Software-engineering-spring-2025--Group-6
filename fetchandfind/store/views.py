@@ -9,12 +9,13 @@ from .models import Product
 from rest_framework import viewsets
 from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
+from django.db.models import Q
 #admin 
 from .forms import CustomUserCreationForm
+from django.views.decorators.http import require_POST
 
 
 # Home Page (Requires Login)
-@login_required
 def home(request):
     return redirect('/products/') 
 
@@ -43,8 +44,7 @@ def add_to_cart(request, product_id):
         if not created:
             cart_item.quantity += quantity
         cart_item.save()
-        return redirect('/products/')  # Redirect to the product list or cart page
-    return redirect('/products/') 
+        return redirect(request.META.get('HTTP_REFERER', '/products/'))  # Redirect back to the referring page or product list
 
 
 # Signup View
@@ -85,24 +85,42 @@ def product_list(request):
     products = Product.objects.all()
 
     # Handle search
+    # Search both the item name and description   
     search_query = request.GET.get('search')
-    if search_query:
-        products = products.filter(name__icontains=search_query)
+    if search_query: 
+        products = products.filter(
+            Q(name__icontains=search_query) | Q(description__icontains=search_query)
+        )
 
-    # Handle filtering
+    # Handle category filtering (ex: ?category=dogs)
+    # Basically just filtering by name and description by searching for the
+    # type of category the user clicks on (like cat, dog, food, etc.)
+    category = request.GET.get('category')
+    if category:
+        products = products.filter(
+            Q(name__icontains=category) | Q(description__icontains=category)
+        )
+
+    # Handle sorting/other filtering
     filter_option = request.GET.get('filter')
     if filter_option == 'price-high':
         products = products.order_by('-price')
     elif filter_option == 'price-low':
         products = products.order_by('price')
+    elif filter_option == 'alpha-asc':
+        products = products.order_by('name')
+    elif filter_option == 'alpha-desc':
+        products = products.order_by('-name')
     
 
     return render(request, 'product_list.html', {'products': products})
+
 def product_detail(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     return render(request, 'product_detail.html', {'product': product})
 
 #Cart View
+@login_required
 def cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
     subtotal = sum(item.get_subtotal() for item in cart_items)
@@ -111,11 +129,116 @@ def cart(request):
         'subtotal': subtotal
     })
 
+#delete cart item
+@login_required
+@require_POST
+def decrememt_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+        messages.info(request, "Item quantity decreased.")
+    else:
+        cart_item.delete()
+        messages.success(request, "Item removed from cart.")
+
+    return redirect('cart')
+
+def increment_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    cart_item.quantity += 1
+    cart_item.save()
+    messages.info(request, "Item quantity increased.")
+    return redirect('cart')
+
+#delete
+@login_required
+def delete_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    cart_item.delete()
+    messages.success(request, "Item removed from cart.")
+    return redirect('cart')
+
+
+#checkout , tax rate is 8.5
+#can bundle discount code with checkout 
+#@login_required
+#def checkout(request):
+
+# --- Design Notes ---
+# Need to retrieve all CartItem objects belonging to the user.
+# Show the subtotal (we need to iterate through all the CartItems)
+# (We don't have an Cart table, so therefore no model method for this)
+
+# Calculate tax (8.5% for Texas, we'll just assume it's always this)
+
+# We need an input field for the user to enter in up to 1 discount (for simplicity)
+# (If they enter in any more, it should just overwrite the existing discount)
+# The discount code should be compared against our database, and if it exists,
+# then retrieve the value of the discount, otherwise error and default to 0.00
+
+# Calculate the final price (subotal + tax - discount)
+
+# Render the checkout page, passing all of these values to the template as context
+# ------
+
+# This is what should actually create Order and OrderItems and add them to our DB
+# (So that we don't have a bunch of pending orders created whene a user opens 
+# the checkout page. Create them only after the order is actually placed.)
+# We will have to create the Order first and initialize its fields, then
+# create each Order_Item from each Cart_Item
+
+# We also need to decrease the product quantity for each order_item according
+# to each order_item's quantity in the order (i.e., user ordered 5 pizzas, 
+# so decrease the in-stock quantity of pizzas by 5 in the database)
+# Refer to how products are re-stocked in `def cancel_order` below
+
+# Finally, clear the user's cart by deleting all of the user's cart items from DB
+# and then redirect (ideally to a success page, but just redirect to user_orders)
+#@login_required
+#@require_POST
+#def place_order(request)
+
+# ------
 
 
 #logs admin actions
+@login_required
 def log_admin_action(admin_user, action_text):
     AdminLog.objects.create(admin=admin_user, action=action_text)
+
+
+# View the user's orders
+@login_required
+def user_orders(request):
+    orders = Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date')
+    return render(request, 'user_orders.html', {'orders': orders})
+
+# Cancel an order
+@login_required
+@require_POST
+def cancel_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.status == 'pending':
+        # Restock each product
+        # Get all orderitems belonging to order
+        order_items = order.orderitem_set.all()
+        for item in order_items:
+            # Get the product associated with an order_item
+            product = item.product
+            # Increase the product's stock by the order_item's quantity
+            product.stock_quantity += item.quantity
+            product.save()
+
+        # Update the order's status
+        order.status = 'canceled'
+        order.save()
+
+    return redirect('store:user_orders')
+
+
 # Django REST Framework ViewSets
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

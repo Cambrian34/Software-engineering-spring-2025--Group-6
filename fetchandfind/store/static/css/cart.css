@@ -1,0 +1,33 @@
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    margin-top: 3vh;
+}
+
+td {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+#product-image {
+    width: 10vw;
+    height: 10vh;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+#product-header {
+    width: 10%;
+}
+
+#product-name-header {
+    width: 42%;
+}
+
+th {
+    text-align: left;
+}
+
+

@@ -19,10 +19,16 @@ body {
 }
 
 button {
-    transition: 0.3s all ease-in-out;
+    transition: 0.1s all ease-in-out;
     cursor: pointer;
     color: rgb(236, 236, 236);
     border-radius: 10px;
+}
+
+.nav-img {
+    width: 2.5vw;
+    height: 4vh;
+    color: white;
 }
 
 .product-container {
