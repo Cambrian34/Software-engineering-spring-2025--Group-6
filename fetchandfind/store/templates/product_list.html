@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>shop</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/product-styles.css" %}">
+    <link rel="stylesheet" href="{% static 'css/product-styles.css' %}">
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/header.css" %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
 </head>
    
 <body>
@@ -36,6 +36,7 @@
         </nav>
     </header>
     <div id="sort-bar">
+        <button class="filter-button" type="button" onclick="location.href='{% url 'store:user_orders' %}';">Orders</button>
         <button class="filter-button" id="home-button">home</button>
         <button class="filter-button" id="dogs-button">dogs</button>
         <button class="filter-button" id="cats-button">cats</button>
