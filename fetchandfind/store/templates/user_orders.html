@@ -6,6 +6,15 @@
     <p>Status: {{ order.status }}</p>
     <p>Total: ${{ order.final_price }}</p>
 
+    {% if order.status == "pending" %}
+      <form method="post" action="{% url 'store:cancel_order' order.id %}" style="margin-top: 10px;">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #ff6666; color: white; border: none; padding: 6px 12px; border-radius: 4px;">
+          Cancel Order
+        </button>
+      </form>
+    {% endif %}
+
     <h3>Items:</h3>
     <ul>
       {% for item in order.orderitem_set.all %}
