@@ -73,6 +73,28 @@
                     <td id="price">${{ item.product.get_price }}</td>
                     <td id="quantity">{{ item.quantity }}</td>
                     <td id="subtotal">${{ item.get_subtotal }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'increment_cart_item' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="incrementcart">+</button>
+                        
+                        </form>    
+                          
+                        <form method="POST" action="{% url 'decrememt_cart_item' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="decrement_cart">-</button>
+                        
+                        </form>    
+                         
+
+                    <form method="POST" action="{% url 'delete_cart_item' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="Delete_From_Cart">X</button>
+                    
+                    </form>    
+                    </td>                
+                    
+
                 </tr>
                 {% endfor %}
             </tbody>
