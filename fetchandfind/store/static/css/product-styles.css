@@ -22,8 +22,8 @@
  }
 
  .filter-button:hover {
-    background-color: rgb(46, 75, 132);
-    font-size: 130%;
+    font-size: 115%;
+    text-decoration: underline;
 }
  
 .product {
@@ -36,11 +36,11 @@
     height: 60vh;
     border-radius: 20px;
     background-color: rgb(255, 255, 255);
-    transition: 0.3s all ease-in-out;
+    transition: 0.1s all ease-in-out;
 }
 
 .product:hover {
-    transform:scale(1.03);
+    transform:scale(1.01);
     background-color: rgb(243, 245, 247);
  }
 
@@ -102,12 +102,12 @@
 
 .favorite-button:hover {
     background-color: rgb(70, 100, 161);
-    transform: scale(1.05)
+    transform: scale(1.03)
 }
 
 .add-to-cart-button:hover {
     background-color: rgb(239, 139, 139);
-    transform: scale(1.05)
+    transform: scale(1.03)
 }
 
 input {
@@ -123,8 +123,4 @@ input {
     height: 100%;
     text-decoration: none;
     color: inherit;
-}
-
-body {
-    background-color: pink;
 }
