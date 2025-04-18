@@ -27,8 +27,11 @@
                 <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}">Home</a></li>
                 <li style="margin-right: 40px;"><a href="{% url 'login' %}">Login</a></li>
                 <li style="margin-right: 40px;"><a href="/admin" target="_blank">Admin Login</a></li>
-                <li style="margin-right: 40px;" ><a href="{% url 'cart' %}">Cart</a></li>
-
+                <li style="margin-right: 40px;"><a href="{% url 'cart' %}">Cart</a></li>
+                <!-- Adding this to the navigation bar currently messes up the
+                 page's alignment. But the page is accessible through /user-orders/
+                <li style="margin-right: 40px;"><a href="{% url 'store:user_orders' %}">Orders</a></li>
+                -->
             </ul>
         </nav>
     </header>
