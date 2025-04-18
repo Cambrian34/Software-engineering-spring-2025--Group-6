@@ -182,6 +182,14 @@ def delete_cart_item(request, item_id):
 # This is what should actually create Order and OrderItems and add them to our DB
 # (So that we don't have a bunch of pending orders created whene a user opens 
 # the checkout page. Create them only after the order is actually placed.)
+# We will have to create the Order first and initialize its fields, then
+# create each Order_Item from each Cart_Item
+
+# We also need to decrease the product quantity for each order_item according
+# to each order_item's quantity in the order (i.e., user ordered 5 pizzas, 
+# so decrease the in-stock quantity of pizzas by 5 in the database)
+# Refer to how products are re-stocked in `def cancel_order` below
+
 # Finally, clear the user's cart by deleting all of the user's cart items from DB
 # and then redirect (ideally to a success page, but just redirect to user_orders)
 #@login_required
@@ -208,9 +216,22 @@ def user_orders(request):
 @require_POST
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
+
     if order.status == 'pending':
+        # Restock each product
+        # Get all orderitems belonging to order
+        order_items = order.orderitem_set.all()
+        for item in order_items:
+            # Get the product associated with an order_item
+            product = item.product
+            # Increase the product's stock by the order_item's quantity
+            product.stock_quantity += item.quantity
+            product.save()
+
+        # Update the order's status
         order.status = 'canceled'
         order.save()
+
     return redirect('store:user_orders')
 
 
