@@ -123,5 +123,3 @@ class AdminLog(models.Model):
 
     def __str__(self):
         return f"{self.admin.username} - {self.action} at {self.timestamp}"
-
-    
