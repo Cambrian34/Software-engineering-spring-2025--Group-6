@@ -47,6 +47,9 @@
         <button class="filter-button" type="button" onclick="submitCategory('supplies')">supplies</button>
     </div>
 
+    <!-- Lets us modify the category form before we submit it, which allows us
+     to reload the page with all of our filters added to the URL as paramaters
+     -->
     <script>
         function submitCategory(category) {
             document.getElementById('categoryInput').value = category;
