@@ -9,6 +9,7 @@ from .models import Product
 from rest_framework import viewsets
 from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
+from django.db.models import Q
 #admin 
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
@@ -84,11 +85,23 @@ def product_list(request):
     products = Product.objects.all()
 
     # Handle search
+    # Search both the item name and description   
     search_query = request.GET.get('search')
-    if search_query:
-        products = products.filter(name__icontains=search_query)
+    if search_query: 
+        products = products.filter(
+            Q(name__icontains=search_query) | Q(description__icontains=search_query)
+        )
 
-    # Handle filtering
+    # Handle category filtering (ex: ?category=dogs)
+    # Basically just filtering by name and description by searching for the
+    # type of category the user clicks on (like cat, dog, food, etc.)
+    category = request.GET.get('category')
+    if category:
+        products = products.filter(
+            Q(name__icontains=category) | Q(description__icontains=category)
+        )
+
+    # Handle sorting/other filtering
     filter_option = request.GET.get('filter')
     if filter_option == 'price-high':
         products = products.order_by('-price')
