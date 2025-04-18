@@ -1,10 +1,17 @@
 <h1>Your Orders</h1>
 
 {% for order in orders %}
-  <div class="order">
-    <h2>Order #{{ order.id }} — {{ order.order_date|date:"M d, Y H:i" }}</h2>
-    <p>Status: {{ order.status }}</p>
-    <p>Total: ${{ order.final_price }}</p>
+    <div class="order">
+      <h2>Order #{{ order.id }} — {{ order.order_date|date:"M d, Y H:i" }}</h2>
+      <p>Status: {{ order.status }}</p>
+
+      <p>Total before tax: ${{ order.total_price }}</p>
+      <p>Tax collected: ${{ order.tax }}</p>
+      {% if order.discount_applied > 0 %}
+        <p>Discount: -${{ order.discount_applied }}</p>
+      {% endif %}
+      <p><strong>Grand Total: ${{ order.final_price }}</strong></p>
+    </div>
 
     {% if order.status == "pending" %}
       <form method="post" action="{% url 'store:cancel_order' order.id %}" style="margin-top: 10px;">

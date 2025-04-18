@@ -149,6 +149,33 @@ def delete_cart_item(request, item_id):
 #@login_required
 #def checkout(request):
 
+# --- Design Notes ---
+# Need to retrieve all CartItem objects belonging to the user.
+# Show the subtotal (we need to iterate through all the CartItems)
+# (We don't have an Cart table, so therefore no model method for this)
+
+# Calculate tax (8.5% for Texas, we'll just assume it's always this)
+
+# We need an input field for the user to enter in up to 1 discount (for simplicity)
+# (If they enter in any more, it should just overwrite the existing discount)
+# The discount code should be compared against our database, and if it exists,
+# then retrieve the value of the discount, otherwise error and default to 0.00
+
+# Calculate the final price (subotal + tax - discount)
+
+# Render the checkout page, passing all of these values to the template as context
+# ------
+
+# This is what should actually create Order and OrderItems and add them to our DB
+# (So that we don't have a bunch of pending orders created whene a user opens 
+# the checkout page. Create them only after the order is actually placed.)
+# Finally, clear the user's cart by deleting all of the user's cart items from DB
+# and then redirect (ideally to a success page, but just redirect to user_orders)
+#@login_required
+#@require_POST
+#def place_order(request)
+
+# ------
 
 
 #logs admin actions

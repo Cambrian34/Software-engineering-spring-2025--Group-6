@@ -92,7 +92,7 @@ class Order(models.Model):
         return self.total_price + self.tax - self.discount_applied
 
     def __str__(self):
-        return f"Order #{self.id} for {self.user.username}" 
+        return f"Order #{self.id} for {self.user.username}"
 
 # Order Items Model
 class OrderItem(models.Model):
