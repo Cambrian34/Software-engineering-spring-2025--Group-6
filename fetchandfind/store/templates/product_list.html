@@ -22,6 +22,8 @@
                         <option value="">Filter results</option>
                         <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
                         <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+                        <option value="alpha-asc" {% if request.GET.filter == 'alpha-asc' %}selected{% endif %}>Name: A to Z</option>
+                        <option value="alpha-desc" {% if request.GET.filter == 'alpha-desc' %}selected{% endif %}>Name: Z to A</option>
                     </select>
                     <input type="hidden" name="category" id="categoryInput" value="{{ request.GET.category }}">
                 </form>

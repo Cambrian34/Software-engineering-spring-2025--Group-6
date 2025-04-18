@@ -107,6 +107,10 @@ def product_list(request):
         products = products.order_by('-price')
     elif filter_option == 'price-low':
         products = products.order_by('price')
+    elif filter_option == 'alpha-asc':
+        products = products.order_by('name')
+    elif filter_option == 'alpha-desc':
+        products = products.order_by('-name')
     
 
     return render(request, 'product_list.html', {'products': products})
