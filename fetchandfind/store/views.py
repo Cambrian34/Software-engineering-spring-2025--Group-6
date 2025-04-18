@@ -9,6 +9,7 @@ from .models import Product
 from rest_framework import viewsets
 from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
+from django.db.models import Q
 #admin 
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
@@ -84,16 +85,32 @@ def product_list(request):
     products = Product.objects.all()
 
     # Handle search
+    # Search both the item name and description   
     search_query = request.GET.get('search')
-    if search_query:
-        products = products.filter(name__icontains=search_query)
+    if search_query: 
+        products = products.filter(
+            Q(name__icontains=search_query) | Q(description__icontains=search_query)
+        )
 
-    # Handle filtering
+    # Handle category filtering (ex: ?category=dogs)
+    # Basically just filtering by name and description by searching for the
+    # type of category the user clicks on (like cat, dog, food, etc.)
+    category = request.GET.get('category')
+    if category:
+        products = products.filter(
+            Q(name__icontains=category) | Q(description__icontains=category)
+        )
+
+    # Handle sorting/other filtering
     filter_option = request.GET.get('filter')
     if filter_option == 'price-high':
         products = products.order_by('-price')
     elif filter_option == 'price-low':
         products = products.order_by('price')
+    elif filter_option == 'alpha-asc':
+        products = products.order_by('name')
+    elif filter_option == 'alpha-desc':
+        products = products.order_by('-name')
     
 
     return render(request, 'product_list.html', {'products': products})
@@ -169,6 +186,14 @@ def delete_cart_item(request, item_id):
 # This is what should actually create Order and OrderItems and add them to our DB
 # (So that we don't have a bunch of pending orders created whene a user opens 
 # the checkout page. Create them only after the order is actually placed.)
+# We will have to create the Order first and initialize its fields, then
+# create each Order_Item from each Cart_Item
+
+# We also need to decrease the product quantity for each order_item according
+# to each order_item's quantity in the order (i.e., user ordered 5 pizzas, 
+# so decrease the in-stock quantity of pizzas by 5 in the database)
+# Refer to how products are re-stocked in `def cancel_order` below
+
 # Finally, clear the user's cart by deleting all of the user's cart items from DB
 # and then redirect (ideally to a success page, but just redirect to user_orders)
 #@login_required
@@ -195,9 +220,22 @@ def user_orders(request):
 @require_POST
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
+
     if order.status == 'pending':
+        # Restock each product
+        # Get all orderitems belonging to order
+        order_items = order.orderitem_set.all()
+        for item in order_items:
+            # Get the product associated with an order_item
+            product = item.product
+            # Increase the product's stock by the order_item's quantity
+            product.stock_quantity += item.quantity
+            product.save()
+
+        # Update the order's status
         order.status = 'canceled'
         order.save()
+
     return redirect('store:user_orders')
 
 
