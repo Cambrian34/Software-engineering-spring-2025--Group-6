@@ -150,3 +150,9 @@ LOGIN_REDIRECT_URL = "store:home"
 LOGOUT_REDIRECT_URL = "store:login"
 # Custom user model
 AUTH_USER_MODEL = 'store.User'
+
+
+#stripe stuff
+# settings.py
+STRIPE_PUBLISHABLE_KEY = ""
+STRIPE_SECRET_KEY = ""

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mock Stripe Checkout</title>
+</head>
+<body>
+    <h2>Checkout</h2>
+    <p>You're about to buy a <strong>Demo T-Shirt</strong> for <strong>$50</strong>.</p>
+    <button id="checkout-button">Pay Now</button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe("{{ stripe_publishable_key }}");
+
+        document.getElementById("checkout-button").addEventListener("click", function () {
+            fetch("/create-checkout-session/")
+                .then(response => response.json())
+                .then(session => {
+                    return stripe.redirectToCheckout({ sessionId: session.id });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        });
+    </script>
+</body>
+</html>

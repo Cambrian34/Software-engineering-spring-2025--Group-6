@@ -33,6 +33,16 @@ urlpatterns = [
     path('cart/delete/<int:item_id>/', views.delete_cart_item, name='delete_cart_item'),
     path('cart/decrement/<int:item_id>/', views.increment_cart_item, name='increment_cart_item'),
     path('cart/increment/<int:item_id>/', views.decrememt_cart_item, name='decrememt_cart_item'),
+    
+
+
+    #stripe
+    path('create-checkout-session/', views.create_checkout_session, name='create-checkout-session'),
+    path('success/', views.success, name='success'),
+    path('cancel/', views.cancel, name='cancel'),
+
+    path('checkout/', views.checkout, name='checkout'),
+
 
 
 

@@ -10,6 +10,9 @@ from rest_framework import viewsets
 from .serializers import UserSerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer, DiscountCodeSerializer, AdminLogSerializer
 from .models import User, Product, CartItem, Order, OrderItem, DiscountCode, AdminLog
 from django.db.models import Q
+import stripe
+from django.conf import settings
+
 #admin 
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
@@ -237,6 +240,44 @@ def cancel_order(request, order_id):
         order.save()
 
     return redirect('store:user_orders')
+
+print("Stripe Secret Key:", settings.STRIPE_SECRET_KEY)  # TEMP for debug
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+from django.http import JsonResponse
+
+def create_checkout_session(request):
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': 5000,
+                'product_data': {
+                    'name': 'Demo T-Shirt',
+                },
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=request.build_absolute_uri('/success/'),
+        cancel_url=request.build_absolute_uri('/cancel/'),
+    )
+    return JsonResponse({'id': session.id})
+
+def success(request):
+    return render(request, 'success.html')
+
+def cancel(request):
+    return render(request, 'cancel.html')
+
+
+def checkout(request):
+    return render(request, 'checkout.html', {
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY
+    })
 
 
 # Django REST Framework ViewSets
