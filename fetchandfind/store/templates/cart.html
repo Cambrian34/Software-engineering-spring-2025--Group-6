@@ -76,7 +76,9 @@
         <div style="text-align: right; margin-top: 20px;">
             <strong>Total: ${{ subtotal }}</strong>
         </div>
-
+        <a href="{% url 'store:checkout' %}" class="btn btn-primary">
+            Proceed to Checkout
+          </a>
        
     {% else %}
         <p>Your cart is empty.</p>
