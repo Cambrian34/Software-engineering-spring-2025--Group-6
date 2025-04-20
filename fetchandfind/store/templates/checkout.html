@@ -1,0 +1,50 @@
+{% load static %}
+<!-- templates/checkout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | FetchAndFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Checkout</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <h2>Your Cart</h2>
+        <ul>
+            {% for item in cart_items %}
+                <li>{{ item.product.name }} - {{ item.quantity }} x ${{ item.product.price }}</li>
+            {% endfor %}
+        </ul>
+        <p><strong>Total:</strong> ${{ total_price }}</p>
+
+        <h2>Shipping Information</h2>
+        <label>Full Name:</label><br>
+        <input type="text" name="full_name" required><br>
+
+        <label>Address:</label><br>
+        <input type="text" name="address" required><br>
+
+        <label>City:</label><br>
+        <input type="text" name="city" required><br>
+
+        <label>ZIP Code:</label><br>
+        <input type="text" name="zip_code" required><br>
+
+        <h2>Payment Info (Mock)</h2>
+        <label>Card Number:</label><br>
+        <input type="text" name="card_number" required><br>
+
+        <label>Expiration:</label><br>
+        <input type="text" name="expiration" placeholder="MM/YY" required><br>
+
+        <label>CVV:</label><br>
+        <input type="text" name="cvv" required><br>
+
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>

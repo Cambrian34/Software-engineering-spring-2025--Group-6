@@ -200,8 +200,43 @@ def delete_cart_item(request, item_id):
 #@require_POST
 #def place_order(request)
 
-# ------
+# Checkout View
+@login_required
+def checkout_view(request):
+    user = request.user
+    cart_items = CartItem.objects.filter(user=user)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
 
+    if request.method == "POST":
+        # Get form data
+        full_name = request.POST['full_name']
+        address = request.POST['address']
+        city = request.POST['city']
+        zip_code = request.POST['zip_code']
+
+        # Normally you'd also validate payment here
+
+        # Create Order
+        order = Order.objects.create(
+            user=user,
+            full_name=full_name,
+            address=address,
+            city=city,
+            zip_code=zip_code,
+            total_price=total_price
+        )
+        order.items.set(cart_items)
+        order.save()
+
+        # Clear cart
+        cart_items.delete()
+
+        return redirect('order_confirmation')
+
+    return render(request, 'checkout.html', {
+        'cart_items': cart_items,
+        'total_price': total_price
+    })
 
 #logs admin actions
 @login_required
