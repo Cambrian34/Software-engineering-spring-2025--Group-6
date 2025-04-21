@@ -269,13 +269,13 @@ def checkout_view(request):
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
-            success_url=request.build_absolute_uri('/success/'),
+            success_url=request.build_absolute_uri('/user-orders/'),
             cancel_url=request.build_absolute_uri('/cancel/'),
         )
 
         # Optionally, you could clear the cart after payment succeeds instead
         cart_items.delete()
-        return JsonResponse({'id': session.id, 'redirect_url': '/orders/'})
+        return redirect(session.url, code=303)
 
     return render(request, 'checkout.html', {
         'cart_items': cart_items,
