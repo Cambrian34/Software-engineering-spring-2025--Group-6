@@ -229,6 +229,7 @@ def checkout_view(request):
         discount = Decimal('0.00')  # Placeholder for discount logic
         final_price = total_price + tax - discount
 
+
         order = Order.objects.create(
             user=user,
             full_name=full_name,
