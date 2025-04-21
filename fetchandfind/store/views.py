@@ -223,11 +223,19 @@ def checkout_view(request):
         address = request.POST['address']
         city = request.POST['city']
         zip_code = request.POST['zip_code']
+        discount_code = request.POST['discount_code']
 
         # Calculate tax as 8.5%
         tax = Decimal(total_price) * Decimal('0.085')
-        discount = Decimal('0.00')  # Placeholder for discount logic
-        final_price = total_price + tax - discount
+        if discount_code == 'Group6':
+            discount = Decimal('2.00')
+            final_price = total_price + tax - discount
+            total_price = final_price
+            print(f'final price: {final_price} and total price: {total_price}')
+        else:
+            discount = Decimal('0.00')  # Placeholder for discount logic
+            final_price = total_price + tax - discount
+            print(final_price)
 
 
         order = Order.objects.create(
@@ -269,13 +277,13 @@ def checkout_view(request):
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
-            success_url=request.build_absolute_uri('/success/'),
+            success_url=request.build_absolute_uri('/user-orders/'),
             cancel_url=request.build_absolute_uri('/cancel/'),
         )
 
         # Optionally, you could clear the cart after payment succeeds instead
         cart_items.delete()
-        return JsonResponse({'id': session.id, 'redirect_url': '/orders/'})
+        return redirect(session.url, code=303)
 
     return render(request, 'checkout.html', {
         'cart_items': cart_items,
