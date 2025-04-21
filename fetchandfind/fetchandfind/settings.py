@@ -150,3 +150,11 @@ LOGIN_REDIRECT_URL = "store:home"
 LOGOUT_REDIRECT_URL = "store:login"
 # Custom user model
 AUTH_USER_MODEL = 'store.User'
+
+
+
+STRIPE_SECRET_KEY = ""
+STRIPE_PUBLISHABLE_KEY = ""
+
+
+
