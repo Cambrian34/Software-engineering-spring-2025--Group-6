@@ -87,6 +87,12 @@ class Order(models.Model):
     final_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('shipped', 'Shipped'), ('delivered', 'Delivered'), ('canceled', 'Canceled')])
     order_date = models.DateTimeField(auto_now_add=True)
+    items = models.ManyToManyField('CartItem')
+    full_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=200)
+    city = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def calculate_final_price(self):
         return self.total_price + self.tax - self.discount_applied
@@ -123,5 +129,3 @@ class AdminLog(models.Model):
 
     def __str__(self):
         return f"{self.admin.username} - {self.action} at {self.timestamp}"
-
-    

@@ -1,0 +1,55 @@
+<a id="back-link" href="{% url 'product_list' %}">&lt;-- Back</a>
+
+<h1>My Orders</h1>
+
+{% for order in orders %}
+    <div class="order">
+      <h2>Order #{{ order.id }} — {{ order.order_date|date:"M d, Y H:i" }}</h2>
+      <p>Status: {{ order.status }}</p>
+
+      <p>Total before tax: ${{ order.total_price }}</p>
+      <p>Tax collected: ${{ order.tax }}</p>
+      {% if order.discount_applied > 0 %}
+        <p>Discount: -${{ order.discount_applied }}</p>
+      {% endif %}
+      <p><strong>Grand Total: ${{ order.final_price }}</strong></p>
+    </div>
+
+    {% if order.status == "pending" %}
+      <form method="post" action="{% url 'store:cancel_order' order.id %}" style="margin-top: 10px;">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #ff6666; color: white; border: none; padding: 6px 12px; border-radius: 4px;">
+          Cancel Order
+        </button>
+      </form>
+    {% endif %}
+
+    <h3>Items:</h3>
+    <ul>
+      {% for item in order.orderitem_set.all %}
+        <li style="margin-bottom: 15px;">
+          <div style="display: flex; align-items: center;">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="100" style="margin-right: 15px; object-fit: cover;">
+            {% else %}
+              <div style="width: 100px; height: 100px; background-color: #eee; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                No image
+              </div>
+            {% endif %}
+            <div>
+              <strong>{{ item.product.name }}</strong><br>
+              Quantity: {{ item.quantity }}<br>
+              Price per item: ${{ item.price_at_purchase }}<br>
+              Subtotal: ${{ item.subtotal }}
+            </div>
+          </div>
+        </li>
+      {% empty %}
+        <li>No items found in this order.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <hr>
+{% empty %}
+  <p>You haven't placed any orders yet.</p>
+{% endfor %}
