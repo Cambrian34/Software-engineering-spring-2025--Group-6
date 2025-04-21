@@ -224,36 +224,24 @@ def checkout_view(request):
         city = request.POST['city']
         zip_code = request.POST['zip_code']
 
-        # Calculate tax as 8.5%
+        # Calculate tax and total
         tax = Decimal(total_price) * Decimal('0.085')
         discount = Decimal('0.00')  # Placeholder for discount logic
         final_price = total_price + tax - discount
 
+        # Save order data in session temporarily
+        request.session['order_data'] = {
+            'full_name': full_name,
+            'address': address,
+            'city': city,
+            'zip_code': zip_code,
+            'total_price': str(total_price),
+            'tax': str(tax),
+            'discount': str(discount),
+            'final_price': str(final_price)
+        }
 
-        order = Order.objects.create(
-            user=user,
-            full_name=full_name,
-            address=address,
-            city=city,
-            zip_code=zip_code,
-            total_price=total_price,
-            tax=tax,
-            discount_applied=discount,
-            final_price=final_price,
-            status='pending'
-        )
-        for item in cart_items:
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                quantity=item.quantity,
-                price_at_purchase=item.product.price,
-                subtotal=item.product.price * item.quantity
-            )
-
-        order.save()
-
-        # Create Stripe Checkout Session using actual cart data
+        # Build line items for Stripe
         line_items = [{
             'price_data': {
                 'currency': 'usd',
@@ -265,16 +253,21 @@ def checkout_view(request):
             'quantity': item.quantity,
         } for item in cart_items]
 
+        # Create Stripe Checkout session
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
-            success_url=request.build_absolute_uri('/user-orders/'),
+            success_url=request.build_absolute_uri('/user-orders/') + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.build_absolute_uri('/cancel/'),
         )
 
-        # Optionally, you could clear the cart after payment succeeds instead
-        cart_items.delete()
+        # Store the cart item info in the session too
+        request.session['cart_items'] = [
+            {'product_id': item.product.id, 'quantity': item.quantity}
+            for item in cart_items
+        ]
+
         return redirect(session.url, code=303)
 
     return render(request, 'checkout.html', {
@@ -288,11 +281,51 @@ def log_admin_action(admin_user, action_text):
     AdminLog.objects.create(admin=admin_user, action=action_text)
 
 
-# View the user's orders
 @login_required
 def user_orders(request):
+    session_id = request.GET.get('session_id')
+
+    if session_id and 'order_data' in request.session and 'cart_items' in request.session:
+        session = stripe.checkout.Session.retrieve(session_id)
+
+        if session.payment_status == 'paid':
+            order_data = request.session.pop('order_data', None)
+            cart_data = request.session.pop('cart_items', None)
+
+            if order_data and cart_data:
+                # Prevent duplicate order creation for same session
+                existing_order = Order.objects.filter(user=request.user, final_price=Decimal(order_data['final_price']), status='paid').exists()
+                if not existing_order:
+                    order = Order.objects.create(
+                        user=request.user,
+                        full_name=order_data['full_name'],
+                        address=order_data['address'],
+                        city=order_data['city'],
+                        zip_code=order_data['zip_code'],
+                        total_price=Decimal(order_data['total_price']),
+                        tax=Decimal(order_data['tax']),
+                        discount_applied=Decimal(order_data['discount']),
+                        final_price=Decimal(order_data['final_price']),
+                        status='pending'
+                    )
+
+                    for item in cart_data:
+                        product = Product.objects.get(id=item['product_id'])
+                        OrderItem.objects.create(
+                            order=order,
+                            product=product,
+                            quantity=item['quantity'],
+                            price_at_purchase=product.price,
+                            subtotal=product.price * item['quantity']
+                        )
+
+                    # Clear cart after order creation
+                    CartItem.objects.filter(user=request.user).delete()
+
+    # Show all the user's orders
     orders = Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date')
     return render(request, 'user_orders.html', {'orders': orders})
+
 
 # Cancel an order
 @login_required
