@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse,HttpResponseBadRequest
 from django.template import loader
@@ -201,6 +202,15 @@ def delete_cart_item(request, item_id):
 #def place_order(request)
 
 # Checkout View
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+import stripe
+from decimal import Decimal
+ 
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 @login_required
 def checkout_view(request):
     user = request.user
@@ -214,30 +224,63 @@ def checkout_view(request):
         city = request.POST['city']
         zip_code = request.POST['zip_code']
 
-        # Normally you'd also validate payment here
+        # Calculate tax as 8.5%
+        tax = Decimal(total_price) * Decimal('0.085')
+        discount = Decimal('0.00')  # Placeholder for discount logic
+        final_price = total_price + tax - discount
 
-        # Create Order
         order = Order.objects.create(
             user=user,
             full_name=full_name,
             address=address,
             city=city,
             zip_code=zip_code,
-            total_price=total_price
+            total_price=total_price,
+            tax=tax,
+            discount_applied=discount,
+            final_price=final_price,
+            status='pending'
         )
-        order.items.set(cart_items)
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price_at_purchase=item.product.price,
+                subtotal=item.product.price * item.quantity
+            )
+
         order.save()
 
-        # Clear cart
+        # Create Stripe Checkout Session using actual cart data
+        line_items = [{
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': int(item.product.price * 100),  # convert to cents
+                'product_data': {
+                    'name': item.product.name,
+                },
+            },
+            'quantity': item.quantity,
+        } for item in cart_items]
+
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=request.build_absolute_uri('/success/'),
+            cancel_url=request.build_absolute_uri('/cancel/'),
+        )
+
+        # Optionally, you could clear the cart after payment succeeds instead
         cart_items.delete()
 
-        return redirect('order_confirmation')
+        return JsonResponse({'id': session.id})
 
     return render(request, 'checkout.html', {
         'cart_items': cart_items,
         'total_price': total_price
     })
-
 #logs admin actions
 @login_required
 def log_admin_action(admin_user, action_text):

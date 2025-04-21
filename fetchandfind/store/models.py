@@ -96,6 +96,10 @@ class Order(models.Model):
 
     def calculate_final_price(self):
         return self.total_price + self.tax - self.discount_applied
+    
+    def save(self, *args, **kwargs):
+        self.final_price = self.calculate_final_price()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Order #{self.id} for {self.user.username}"
