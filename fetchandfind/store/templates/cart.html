@@ -1,116 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 {% extends "base.html" %}
 {% load static %}
 
+
 {% block content %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cart</title>
-    <link rel="stylesheet" href="{% static "css/cart.css" %}">
-    <link rel="stylesheet" href="{% static "css/header.css" %}">
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>cart</title>
+   <link rel="stylesheet" href="{% static "css/cart.css" %}">
+   <link rel="stylesheet" href="{% static "css/header.css" %}">
 </head>
+
+
 
 
 <body>
 <header>
-    <nav>
-        <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
-            <li><img src="../../media/logo.png" class="logo"/></li>
-            <li style="margin-right: 40px;"><h1>Fetch & Find</h1></li>
-            <form method="get" style="display: flex;" id="filterForm">
-                <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
-                <select id="filter-dropdown" name="filter" onchange="document.getElementById('filterForm').submit();">
-                    <option value="" >Filter results</option>
-                    <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
-                    <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
-                </select>
-            </form>
-            <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 21V13.6C9 13.0399 9 12.7599 9.10899 12.546C9.20487 12.3578 9.35785 12.2049 9.54601 12.109C9.75992 12 10.0399 12 10.6 12H13.4C13.9601 12 14.2401 12 14.454 12.109C14.6422 12.2049 14.7951 12.3578 14.891 12.546C15 12.7599 15 13.0399 15 13.6V21M11.0177 2.764L4.23539 8.03912C3.78202 8.39175 3.55534 8.56806 3.39203 8.78886C3.24737 8.98444 3.1396 9.20478 3.07403 9.43905C3 9.70352 3 9.9907 3 10.5651V17.8C3 18.9201 3 19.4801 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4801 21 18.9201 21 17.8V10.5651C21 9.9907 21 9.70352 20.926 9.43905C20.8604 9.20478 20.7526 8.98444 20.608 8.78886C20.4447 8.56806 20.218 8.39175 19.7646 8.03913L12.9823 2.764C12.631 2.49075 12.4553 2.35412 12.2613 2.3016C12.0902 2.25526 11.9098 2.25526 11.7387 2.3016C11.5447 2.35412 11.369 2.49075 11.0177 2.764Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></a></li>
-            <li style="margin-right: 40px;"><a href="{% url 'login' %}"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 20C5.33579 17.5226 8.50702 16 12 16C15.493 16 18.6642 17.5226 21 20M16.5 7.5C16.5 9.98528 14.4853 12 12 12C9.51472 12 7.5 9.98528 7.5 7.5C7.5 5.01472 9.51472 3 12 3C14.4853 3 16.5 5.01472 16.5 7.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></a></li>
-            <li style="margin-right: 40px;"><a href="/admin" target="_blank"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17 10V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V10M12 14.5V16.5M8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C17.7202 10 16.8802 10 15.2 10H8.8C7.11984 10 6.27976 10 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></a></li>
-            <li style="margin-right: 40px;" ><a href="{% url 'cart' %}"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5.00014 14H18.1359C19.1487 14 19.6551 14 20.0582 13.8112C20.4134 13.6448 20.7118 13.3777 20.9163 13.0432C21.1485 12.6633 21.2044 12.16 21.3163 11.1534L21.9013 5.88835C21.9355 5.58088 21.9525 5.42715 21.9031 5.30816C21.8597 5.20366 21.7821 5.11697 21.683 5.06228C21.5702 5 21.4155 5 21.1062 5H4.50014M2 2H3.24844C3.51306 2 3.64537 2 3.74889 2.05032C3.84002 2.09463 3.91554 2.16557 3.96544 2.25376C4.02212 2.35394 4.03037 2.48599 4.04688 2.7501L4.95312 17.2499C4.96963 17.514 4.97788 17.6461 5.03456 17.7462C5.08446 17.8344 5.15998 17.9054 5.25111 17.9497C5.35463 18 5.48694 18 5.75156 18H19M7.5 21.5H7.51M16.5 21.5H16.51M8 21.5C8 21.7761 7.77614 22 7.5 22C7.22386 22 7 21.7761 7 21.5C7 21.2239 7.22386 21 7.5 21C7.77614 21 8 21.2239 8 21.5ZM17 21.5C17 21.7761 16.7761 22 16.5 22C16.2239 22 16 21.7761 16 21.5C16 21.2239 16.2239 21 16.5 21C16.7761 21 17 21.2239 17 21.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></img></a></li>
-        </ul>
-    </nav>
+   <nav>
+       <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
+           <li><img src="../../media/logo.png" class="logo"/></li>
+           <li style="margin-right: 40px;"><h1>Fetch & Find</h1></li>
+           <form method="get" style="display: flex;" id="filterForm">
+               <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
+               <select id="filter-dropdown" name="filter" onchange="document.getElementById('filterForm').submit();">
+                   <option value="" >Filter results</option>
+                   <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
+                   <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+               </select>
+           </form>
+           <li style="margin-left: 40px; margin-right: 40px;"><a href="{% url 'home' %}"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M9 21V13.6C9 13.0399 9 12.7599 9.10899 12.546C9.20487 12.3578 9.35785 12.2049 9.54601 12.109C9.75992 12 10.0399 12 10.6 12H13.4C13.9601 12 14.2401 12 14.454 12.109C14.6422 12.2049 14.7951 12.3578 14.891 12.546C15 12.7599 15 13.0399 15 13.6V21M11.0177 2.764L4.23539 8.03912C3.78202 8.39175 3.55534 8.56806 3.39203 8.78886C3.24737 8.98444 3.1396 9.20478 3.07403 9.43905C3 9.70352 3 9.9907 3 10.5651V17.8C3 18.9201 3 19.4801 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4801 21 18.9201 21 17.8V10.5651C21 9.9907 21 9.70352 20.926 9.43905C20.8604 9.20478 20.7526 8.98444 20.608 8.78886C20.4447 8.56806 20.218 8.39175 19.7646 8.03913L12.9823 2.764C12.631 2.49075 12.4553 2.35412 12.2613 2.3016C12.0902 2.25526 11.9098 2.25526 11.7387 2.3016C11.5447 2.35412 11.369 2.49075 11.0177 2.764Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+               </svg></a></li>
+           <li style="margin-right: 40px;"><a href="{% url 'login' %}"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M3 20C5.33579 17.5226 8.50702 16 12 16C15.493 16 18.6642 17.5226 21 20M16.5 7.5C16.5 9.98528 14.4853 12 12 12C9.51472 12 7.5 9.98528 7.5 7.5C7.5 5.01472 9.51472 3 12 3C14.4853 3 16.5 5.01472 16.5 7.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+               </svg></a></li>
+           <li style="margin-right: 40px;"><a href="/admin" target="_blank"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M17 10V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V10M12 14.5V16.5M8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C17.7202 10 16.8802 10 15.2 10H8.8C7.11984 10 6.27976 10 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+               </svg></a></li>
+           <li style="margin-right: 40px;" ><a href="{% url 'cart' %}"><svg class="nav-img" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M5.00014 14H18.1359C19.1487 14 19.6551 14 20.0582 13.8112C20.4134 13.6448 20.7118 13.3777 20.9163 13.0432C21.1485 12.6633 21.2044 12.16 21.3163 11.1534L21.9013 5.88835C21.9355 5.58088 21.9525 5.42715 21.9031 5.30816C21.8597 5.20366 21.7821 5.11697 21.683 5.06228C21.5702 5 21.4155 5 21.1062 5H4.50014M2 2H3.24844C3.51306 2 3.64537 2 3.74889 2.05032C3.84002 2.09463 3.91554 2.16557 3.96544 2.25376C4.02212 2.35394 4.03037 2.48599 4.04688 2.7501L4.95312 17.2499C4.96963 17.514 4.97788 17.6461 5.03456 17.7462C5.08446 17.8344 5.15998 17.9054 5.25111 17.9497C5.35463 18 5.48694 18 5.75156 18H19M7.5 21.5H7.51M16.5 21.5H16.51M8 21.5C8 21.7761 7.77614 22 7.5 22C7.22386 22 7 21.7761 7 21.5C7 21.2239 7.22386 21 7.5 21C7.77614 21 8 21.2239 8 21.5ZM17 21.5C17 21.7761 16.7761 22 16.5 22C16.2239 22 16 21.7761 16 21.5C16 21.2239 16.2239 21 16.5 21C16.7761 21 17 21.2239 17 21.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+               </svg></img></a></li>
+       </ul>
+   </nav>
 </header>
 
-<div class="cart-container" style="max-width: 1000px; margin: auto; max-height: 50vh">
-    <h2>Your Shopping Cart</h2>
-    
 
-    {% if cart_items %}
-        <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr>
-                    <th id="product-header" style="text-align: left;">Product</th>
-                    <th id="product-name-header"></th>
-                    <th id="price-header;">Price</th>
-                    <th id="quantity-header;">Quantity</th>
-                    <th id="subtotal-header;">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cart_items %}
-                <tr style="border-top: 1px solid #ccc;">
-                    <td id="product">
-                        <div style="display: flex; align-items: center;">
-                            {% if item.product.image %}
-                                <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
-                            {% endif %}
-                            <td id="name">{{ item.product.name }}</td>
-                        </div>
-                    </td>
-                    <td id="price">${{ item.product.get_price }}</td>
-                    <td id="quantity">{{ item.quantity }}</td>
-                    <td id="subtotal">${{ item.get_subtotal }}</td>
-                    <td>
-                        <form method="POST" action="{% url 'increment_cart_item' item.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="incrementcart">+</button>
-                        
-                        </form>    
-                          
-                        <form method="POST" action="{% url 'decrememt_cart_item' item.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="decrement_cart">-</button>
-                        
-                        </form>    
-                         
+<div class="cart-container" style="max-width: 1000px;">
+   <h2>Your Shopping Cart</h2>
+  
 
-                    <form method="POST" action="{% url 'delete_cart_item' item.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="Delete_From_Cart">X</button>
-                    
-                    </form>    
-                    </td>                
-                    
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+   {% if cart_items %}
+       <table class="cart-table" style="width: 100%; border-collapse: collapse; margin-top: 4%;">
+           <thead style="height: 8vh;">
+               <tr>
+                   <th id="product-header" style="text-align: left;">Product</th>
+                   <th id="product-name-header"></th>
+                   <th id="price-header;">Price</th>
+                   <th id="quantity-header;">Quantity</th>
+                   <th id="subtotal-header;">Subtotal</th>
+               </tr>
+           </thead>
+           <tbody>
+               {% for item in cart_items %}
+               <tr style="border-top: 1px solid #ccc;">
+                   <td id="product">
+                       <div style="display: flex; align-items: center; margin-top: 2%;">
+                           {% if item.product.image %}
+                               <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
+                           {% endif %}
+                           <td id="name">{{ item.product.name }}</td>
+                       </div>
+                   </td>
+                   <td id="price">${{ item.product.get_price }}</td>
+                   <td id="quantity">{{ item.quantity }}</td>
+                   <td id="subtotal">${{ item.get_subtotal }}</td>
+                   <td>
+                   <div id="quantity-buttons-container">
+                       <form method="POST" action="{% url 'decrememt_cart_item' item.id %}">
+                           {% csrf_token %}
+                           <button type="submit" class="decrement_cart quantity-button">-</button>
+                      
+                       </form>  
+                       <form method="POST" action="{% url 'increment_cart_item' item.id %}">
+                           {% csrf_token %}
+                           <button type="submit" class="incrementcart quantity-button">+</button>
+                      
+                       </form>      
+                       
 
-        <div style="text-align: right; margin-top: 20px;">
-            <strong>Total: ${{ subtotal }}</strong>
-        </div>
-        <a href="{% url 'store:checkout' %}" class="btn btn-primary">
-            Proceed to Checkout
-          </a>
-       
-    {% else %}
-        <p>Your cart is empty.</p>
-    {% endif %}
+
+                   <form method="POST" action="{% url 'delete_cart_item' item.id %}">
+                       {% csrf_token %}
+                       <button type="submit" class="Delete_From_Cart quantity-button">x</button>
+                  
+                   </form> 
+                   </div> 
+                   </td>               
+                  
+
+
+               </tr>
+               {% endfor %}
+           </tbody>
+       </table>
+
+
+           <div id="subtotal-container" style="text-align: right; margin-top: 5%;">
+               <strong>Total: ${{ subtotal }}</strong>
+           </div>
+           <div id="checkout-button-container" style="text-align: left; margin-top: -2.5%;">
+               <a id="checkout-button" href="{% url 'store:checkout' %}" class="btn btn-primary">proceed to checkout</a>
+           </div>
+     
+   {% else %}
+       <p>Your cart is empty.</p>
+   {% endif %}
 </div>
+
 
 </body>
 {% endblock %}
