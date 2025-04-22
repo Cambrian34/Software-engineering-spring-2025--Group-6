@@ -93,6 +93,7 @@ class Order(models.Model):
     city = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
+    checkout_session_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
 
     def calculate_final_price(self):
         return self.total_price + self.tax - self.discount_applied
