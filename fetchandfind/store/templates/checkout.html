@@ -44,57 +44,62 @@
 </header>
 <h1>Checkout</h1>
 <div class="cart-container" style="max-width: 1000px; margin: auto; max-height: 50vh">
-    <h2>Your Shopping Cart</h2>
-    
 
-    {% if cart_items %}
-        <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr>
-                    <th id="product-header" style="text-align: left;">Product</th>
-                    <th id="product-name-header"></th>
-                    <th id="price-header;">Price</th>
-                    <th id="quantity-header;">Quantity</th>
-                    <th id="subtotal-header;">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cart_items %}
-                <tr style="border-top: 1px solid #ccc;">
-                    <td id="product">
-                        <div style="display: flex; align-items: center;">
-                            {% if item.product.image %}
-                                <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
-                            {% endif %}
-                            <td id="name">{{ item.product.name }}</td>
-                        </div>
-                    </td>
-                    <td id="price">${{ item.product.get_price }}</td>
-                    <td id="quantity">{{ item.quantity }}</td>
-                    <td id="subtotal">${{ item.get_subtotal }}</td>
-                    
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div style="text-align: right; margin-top: 20px;">
-            <strong>Total: ${{ total_price }}</strong>
-        </div>
-        <h2>Shipping Information</h2>
-        <label>Full Name:</label><br>
-        <input type="text" name="full_name" required><br>
-    
-        <label>Address:</label><br>
-        <input type="text" name="address" required><br>
-    
-        <label>City:</label><br>
-        <input type="text" name="city" required><br>
-    
-        <label>ZIP Code:</label><br>
-        <input type="text" name="zip_code" required><br>
-    
-        <button type="submit">Place Order</button>
+    <form method="post">
+        {% csrf_token %}
+
+        <h2>Your Shopping Cart</h2>
+        
+        {% if cart_items %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th id="product-header" style="text-align: left;">Product</th>
+                        <th id="product-name-header"></th>
+                        <th id="price-header;">Price</th>
+                        <th id="quantity-header;">Quantity</th>
+                        <th id="subtotal-header;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr style="border-top: 1px solid #ccc;">
+                        <td id="product">
+                            <div style="display: flex; align-items: center;">
+                                {% if item.product.image %}
+                                    <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
+                                {% endif %}
+                                <td id="name">{{ item.product.name }}</td>
+                            </div>
+                        </td>
+                        <td id="price">${{ item.product.get_price }}</td>
+                        <td id="quantity">{{ item.quantity }}</td>
+                        <td id="subtotal">${{ item.get_subtotal }}</td>
+                        
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div style="text-align: right; margin-top: 20px;">
+                <strong>Total: ${{ total_price }}</strong>
+            </div>
+            <h2>Shipping Information</h2>
+            <label>Full Name:</label><br>
+            <input type="text" name="full_name" required><br>
+        
+            <label>Address:</label><br>
+            <input type="text" name="address" required><br>
+        
+            <label>City:</label><br>
+            <input type="text" name="city" required><br>
+        
+            <label>ZIP Code:</label><br>
+            <input type="text" name="zip_code" required><br>
+        
+            <button type="submit">Place Order</button>
+    </form>
        
     {% else %}
         <p>Your cart is empty.</p>
