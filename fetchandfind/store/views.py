@@ -294,7 +294,7 @@ def user_orders(request):
 
             if order_data and cart_data:
                 # Prevent duplicate order creation for same session
-                existing_order = Order.objects.filter(user=request.user, final_price=Decimal(order_data['final_price']), status='paid').exists()
+                existing_order = Order.objects.filter(checkout_session_id=session_id).exists()
                 if not existing_order:
                     order = Order.objects.create(
                         user=request.user,
@@ -306,7 +306,8 @@ def user_orders(request):
                         tax=Decimal(order_data['tax']),
                         discount_applied=Decimal(order_data['discount']),
                         final_price=Decimal(order_data['final_price']),
-                        status='pending'
+                        status='pending',
+                        checkout_session_id=session_id
                     )
 
                     for item in cart_data:
