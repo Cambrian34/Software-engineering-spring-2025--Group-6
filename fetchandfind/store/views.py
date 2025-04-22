@@ -320,6 +320,10 @@ def user_orders(request):
                             subtotal=product.price * item['quantity']
                         )
 
+                        # Decrease product's stock quantity
+                        product.stock_quantity -= item['quantity']
+                        product.save()
+
                     # Clear cart after order creation
                     CartItem.objects.filter(user=request.user).delete()
 
