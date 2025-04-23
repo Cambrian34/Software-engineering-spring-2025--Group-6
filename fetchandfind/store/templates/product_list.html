@@ -29,7 +29,7 @@
                         <option value="alpha-asc" {% if request.GET.filter == 'alpha-asc' %}selected{% endif %}>Name: A to Z</option>
                         <option value="alpha-desc" {% if request.GET.filter == 'alpha-desc' %}selected{% endif %}>Name: Z to A</option>
                         <option value="quantity-high" {% if request.GET.filter == 'quantity-high' %}selected{% endif %}>Quantity: high to low</option>
-                        <option value="quantity-low" {% if request.GET.filter == 'quantity-low' %}selected{% endif %}>Quantity: Z to A</option>
+                        <option value="quantity-low" {% if request.GET.filter == 'quantity-low' %}selected{% endif %}>Quantity: low to high</option>
                     </select>
                         <input type="hidden" name="category" id="categoryInput" value="{{ request.GET.category }}">
                 </form>
