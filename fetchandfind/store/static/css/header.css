@@ -39,6 +39,32 @@ body {
     height: 4vh;
     color: white;
  }
+
+ .tip-container { 
+   position: relative;
+   display: inline-block; 
+ }
+
+ .tip-container .tip {
+   visibility: hidden;
+   width: 4vw;
+   background-color: rgba(199, 199, 199, 0.4);
+   color: #fff;
+   text-align: center;
+   padding: 5px 0;
+   border-radius: 6px;
+   position: absolute;
+   z-index: 1;
+   bottom: 106%; 
+   transform: translateX(-50%);
+   font-size: .7vw;
+   
+ }
+
+ 
+ .tip-container:hover .tip {
+   visibility: visible;
+ }
  
  
  .product-container {
