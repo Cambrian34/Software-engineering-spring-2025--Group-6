@@ -112,6 +112,10 @@ def product_list(request):
         products = products.order_by('name')
     elif filter_option == 'alpha-desc':
         products = products.order_by('-name')
+    elif filter_option == 'quantity-high':
+        products = products.order_by('-stock_quantity')
+    elif filter_option == 'quantity-low':
+        products = products.order_by('stock_quantity')
     
 
     return render(request, 'product_list.html', {'products': products})
@@ -228,7 +232,7 @@ def checkout_view(request):
         zip_code = request.POST['zip_code']
 
         # Calculate tax and total
-        tax = Decimal(total_price) * Decimal('0.085')
+        tax = Decimal(total_price) * Decimal('0.0825')
         discount = Decimal('0.00')  # Placeholder for discount logic
         final_price = total_price + tax - discount
 
