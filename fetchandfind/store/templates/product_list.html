@@ -66,7 +66,7 @@
         </nav>
     </header>
     <div id="sort-bar">
-        <button class="filter-button" onclick="window.location.href='{% url 'store:user_orders' %}'">Orders</button>
+        <button class="filter-button" type="button" onclick="submitCategory('')">all</button>
         <button class="filter-button" type="button" onclick="submitCategory('dogs')">dogs</button>
         <button class="filter-button" type="button" onclick="submitCategory('cats')">cats</button>
         <button class="filter-button" type="button" onclick="submitCategory('food')">food</button>
