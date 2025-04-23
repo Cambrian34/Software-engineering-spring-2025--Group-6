@@ -252,7 +252,7 @@ def checkout_view(request):
         line_items = [{
             'price_data': {
                 'currency': 'usd',
-                'unit_amount': int(item.product.get_price * 100),  # convert to cents
+                'unit_amount': int(item.product.get_price() * 100),  # convert to cents
                 'product_data': {
                     'name': item.product.name,
                 },
@@ -323,8 +323,8 @@ def user_orders(request):
                             order=order,
                             product=product,
                             quantity=item['quantity'],
-                            price_at_purchase=product.get_price,
-                            subtotal=product.get_price * item['quantity']
+                            price_at_purchase=product.get_price(),
+                            subtotal=product.get_price() * item['quantity']
                         )
 
                         # Decrease product's stock quantity
