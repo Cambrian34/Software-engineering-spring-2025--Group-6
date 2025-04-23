@@ -1,0 +1,31 @@
+.content-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    width: 100%;
+    gap: 5vw;
+}
+
+.checkout-container {
+    margin-right: 10vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.continue-to-checkout {
+    width: 25vw;
+    height: 4vh;
+    background-color: rgb(210, 119, 119);
+    gap: 0;
+ }
+
+ .shipping-input {
+    width: 25vw;
+    height: 4vh;
+    margin-bottom: 1vh;
+    border-radius: 10px;
+    border: solid black 1px;
+ }
