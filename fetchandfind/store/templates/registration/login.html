@@ -9,6 +9,8 @@
  <button type="submit">Submit</button>
 </form>
 <a class="signup-link" href="{% url "store:authView" %}">Signup</a>
+<a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a></div>
+
 </div>
 </div>
 {% endblock content %}a

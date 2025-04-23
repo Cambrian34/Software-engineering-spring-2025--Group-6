@@ -10,6 +10,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=15)
     user_role = models.CharField(max_length=10, choices=[('customer', 'Customer'), ('admin', 'Admin')])
     created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)  
 
     groups = models.ManyToManyField(
         'auth.Group',
