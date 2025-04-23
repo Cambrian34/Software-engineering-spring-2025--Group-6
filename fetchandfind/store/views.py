@@ -105,9 +105,9 @@ def product_list(request):
     # Handle sorting/other filtering
     filter_option = request.GET.get('filter')
     if filter_option == 'price-high':
-        products = products.order_by('-price')
+        products = sorted(products, key=lambda p: p.get_price(), reverse=True)
     elif filter_option == 'price-low':
-        products = products.order_by('price')
+        products = sorted(products, key=lambda p: p.get_price())
     elif filter_option == 'alpha-asc':
         products = products.order_by('name')
     elif filter_option == 'alpha-desc':
@@ -218,7 +218,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 def checkout_view(request):
     user = request.user
     cart_items = CartItem.objects.filter(user=user)
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    total_price = sum(item.product.get_price() * item.quantity for item in cart_items)
 
     if request.method == "POST":
         # Get form data
@@ -248,7 +248,7 @@ def checkout_view(request):
         line_items = [{
             'price_data': {
                 'currency': 'usd',
-                'unit_amount': int(item.product.price * 100),  # convert to cents
+                'unit_amount': int(item.product.get_price * 100),  # convert to cents
                 'product_data': {
                     'name': item.product.name,
                 },
@@ -319,8 +319,8 @@ def user_orders(request):
                             order=order,
                             product=product,
                             quantity=item['quantity'],
-                            price_at_purchase=product.price,
-                            subtotal=product.price * item['quantity']
+                            price_at_purchase=product.get_price,
+                            subtotal=product.get_price * item['quantity']
                         )
 
                         # Decrease product's stock quantity
