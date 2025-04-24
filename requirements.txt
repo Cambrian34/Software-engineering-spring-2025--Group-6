@@ -5,3 +5,5 @@ django-cors-headers==3.7.0
 Pillow==8.3.2
 
 Stripe
+
+ social-auth-app-django

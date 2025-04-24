@@ -103,7 +103,7 @@ DATABASES = {
 
 # Allow 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 LOGIN_REDIRECT_URL = '/'  # Redirect to home page after login
 
