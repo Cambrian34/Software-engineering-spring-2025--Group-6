@@ -6,13 +6,15 @@ body {
 table {
    margin-top: 5vh;
 }
+
 .cart-container {
    margin: 5vh auto;
    padding: 5vh;
    background-color: white;
-   max-width: 40vw;
+   width: 80%;
    overflow-x: None;
    border-radius: 2%;
+   min-height: 78vh;
 }
 
 
@@ -21,10 +23,13 @@ table {
   margin-left: 5vw;
   padding: 5vh;
   background-color: white;
-  max-width: 40vw;
+  width: 60%;
   overflow-x: auto;
   border-radius: 2%;
+  min-height: 78vh;
+  max-height: 78vh;
 }
+
 td {
    padding-top: 2vh;
    padding-bottom: 2vh;

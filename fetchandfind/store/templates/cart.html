@@ -71,7 +71,7 @@
 </header>
 
 
-<div class="cart-container" style="max-width: 1000px;">
+<div class="cart-container">
    <h2>Your Shopping Cart</h2>
   
 
@@ -80,11 +80,11 @@
        <table class="cart-table" style="width: 100%; border-collapse: collapse; margin-top: 4%;">
            <thead style="height: 8vh;">
                <tr>
-                   <th id="product-header" style="text-align: left;">Product</th>
-                   <th id="product-name-header"></th>
-                   <th id="price-header;">Price</th>
-                   <th id="quantity-header;">Quantity</th>
-                   <th id="subtotal-header;">Subtotal</th>
+                   <th id="product-header" style="text-align: left; width: 10%;">Product</th>
+                   <th id="product-name-header" style="width: 60%;"></th>
+                   <th id="price-header;" style="width: 10%;">Price</th>
+                   <th id="quantity-header;" style="width: 10%">Quantity</th>
+                   <th id="subtotal-header;" style="width: 10%;">Subtotal</th>
                </tr>
            </thead>
            <tbody>
@@ -131,16 +131,17 @@
            </tbody>
        </table>
 
-
+       <div id="bottom-container">
            <div id="subtotal-container" style="text-align: right; margin-top: 5%;">
                <strong>Total: ${{ subtotal }}</strong>
            </div>
            <div id="checkout-button-container" style="text-align: left; margin-top: -2.5%;">
                <a id="checkout-button" href="{% url 'store:checkout' %}" class="btn btn-primary">proceed to checkout</a>
            </div>
+        </div>
      
    {% else %}
-       <p>Your cart is empty.</p>
+       <p>Cart is empty...</p>
    {% endif %}
 </div>
 
