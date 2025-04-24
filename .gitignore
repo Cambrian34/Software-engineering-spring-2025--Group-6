@@ -5,7 +5,8 @@
 __pycache__
 .DS_Store
 
-db.sqlite3  
+#db.sqlite3  readded for now
+
 #google auth problems# 
 
 .env
