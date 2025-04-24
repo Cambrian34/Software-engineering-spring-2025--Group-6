@@ -152,9 +152,12 @@ def decrememt_cart_item(request, item_id):
 
 def increment_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
-    cart_item.quantity += 1
-    cart_item.save()
-    messages.info(request, "Item quantity increased.")
+    if cart_item.quantity < cart_item.product.stock_quantity:
+        cart_item.quantity += 1
+        cart_item.save()
+        messages.info(request, "Item quantity increased.")
+    else:
+        messages.error(request, "Cannot add more items. Not enough stock available.")
     return redirect('cart')
 
 #delete

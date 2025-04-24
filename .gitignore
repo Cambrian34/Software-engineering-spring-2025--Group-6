@@ -5,6 +5,9 @@
 __pycache__
 .DS_Store
 
+db.sqlite3  
+#google auth problems# 
+
 .env
 # Backup files # 
 *.bak 

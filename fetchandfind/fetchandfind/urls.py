@@ -42,6 +42,9 @@ urlpatterns = [
 
     # Store URLs
     path("", include("store.urls")),
+
+    #Oauth
+    path('oauth/', include('social_django.urls', namespace='social')),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
