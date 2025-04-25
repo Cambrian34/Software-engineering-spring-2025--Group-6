@@ -8,7 +8,13 @@
  {% load static %}
  <link rel="stylesheet" href="{% static "css/style.css" %}">
  <link rel="icon" type="image/png" href="{% static "../media/logo.png" %}">
-
+ {% if messages %}
+ <ul class="messages">
+   {% for message in messages %}
+     <li class="{{ message.tags }}">{{ message }}</li>
+   {% endfor %}
+ </ul>
+{% endif %}
 </head>
 <body>
   {% block content %}{% endblock content %}
