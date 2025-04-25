@@ -18,7 +18,7 @@ admin.site.register(LogEntry)
 # --- Product Admin Configuration ---
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'stock_quantity', 'is_on_sale')
+    list_display = ('name', 'price', 'stock_quantity', 'is_on_sale', 'sale_price')
     list_filter = ('is_on_sale',)
     search_fields = ('name', 'description')
 
