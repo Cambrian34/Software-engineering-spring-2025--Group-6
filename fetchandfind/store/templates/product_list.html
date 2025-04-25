@@ -96,7 +96,7 @@
                 <p>No image available</p>
             {% endif %}
             <h2>{{ product.name }}</h2>
-            <p>${{ product.price }}</p>
+            <p>${{ product.get_price }}</p>
             <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ product.id }}">
