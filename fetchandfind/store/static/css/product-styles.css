@@ -78,42 +78,24 @@
     justify-content: center;
     align-items: center;
     gap: 2%;
+
  }
  
  
  .add-to-cart-button {
-    width: 25vh;
+    width: 30vh;
     height: 4vh;
     background-color: rgb(210, 119, 119);
+    border: 1px transparent solid;
  }
  
  
- .favorite-button {
-    width: 4vw;
-    height: 4vh;
-    background-color: rgb(61, 90, 147);
-    display: flex;
-    justify-content: center;
-    align-items: center;
- }
- 
- 
- .favorite-icon {
-    width: 3vw;
-    height: 3vh;
-    filter: invert(1);
- }
- 
- 
- .favorite-button:hover {
-    background-color: rgb(70, 100, 161);
-    transform: scale(1.03)
- }
- 
+
  
  .add-to-cart-button:hover {
     background-color: rgb(239, 139, 139);
-    transform: scale(1.03)
+    transform: scale(1.03);
+    border-color: #10182F;
  }
  
  
