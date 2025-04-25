@@ -20,6 +20,13 @@
     height: 4vh;
     background-color: rgb(210, 119, 119);
     gap: 0;
+    border: 1px solid transparent;
+ }
+
+ .continue-to-checkout:hover {
+    color: #ffffff;
+    border-color: #10182F;
+    background-color: rgb(239, 139, 139);
  }
 
  .shipping-input {
@@ -28,4 +35,8 @@
     margin-bottom: 1vh;
     border-radius: 10px;
     border: solid black 1px;
+ }
+
+ table {
+    width: 100%;
  }

@@ -57,7 +57,13 @@ td {
    border-radius: 10px;
    text-decoration: none;
    padding: 1% 10% 1% 10%;
-   border: solid black 1px;
+   border: solid transparent 1px;
+}
+
+#checkout-button:hover {
+   color: #ffffff;
+   border-color: #10182F;
+   background-color: rgb(239, 139, 139);
 }
 th {
    text-align: left;
@@ -79,6 +85,7 @@ th {
    font-size: 2vh;
    align-items: center;
    justify-content: center;
+   border: 1px transparent solid;
 }
 .decrement_cart {
    background-color: rgb(61, 90, 147);
@@ -89,10 +96,14 @@ th {
 }
 .incrementcart:hover, .decrement_cart:hover {
    background-color: rgb(70, 100, 161);
+   color: #ffffff;
+   border-color: #10182F;
 }
 .Delete_From_Cart {
    background-color: rgb(210, 119, 119);
 }
 .Delete_From_Cart:hover {
    background-color: rgb(239, 139, 139);
+   color: #ffffff;
+   border-color: #10182F;
 }

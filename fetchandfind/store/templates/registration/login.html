@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="header-title">
+ <img class="login-logo" src="../../media/logo.png"></img>
+ <h1 class="title">Fetch & Find</h1>
+</div>
 <div class="shadow-wrap">
  <div class="form-wrap">
   <h3>Login </h3>
@@ -9,8 +13,8 @@
  <button type="submit">Submit</button>
 </form>
 <a class="signup-link" href="{% url "store:authView" %}">Signup</a>
-<a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a></div>
+<a class="signup-link" href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a></div>
 
 </div>
 </div>
-{% endblock content %}a
+{% endblock content %}
