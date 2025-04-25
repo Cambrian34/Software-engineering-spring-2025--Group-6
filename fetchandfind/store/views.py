@@ -243,7 +243,8 @@ def checkout_view(request):
             try:
                 discount_code_obj = DiscountCode.objects.get(code=discount_code_str)
                 if discount_code_obj.start_date <= timezone.now() <= discount_code_obj.end_date:
-                    discount = discount_code_obj.discount_value
+                    # Convert discount to decimal (e.g., 10% -> 0.01)
+                    discount = discount_code_obj.discount_value / 100
                     final_price = total_price + tax - discount
                     print(f'Discount applied. final price: {final_price} and total price: {total_price}')
                 else:
@@ -273,7 +274,8 @@ def checkout_view(request):
         line_items = [{
             'price_data': {
                 'currency': 'usd',
-                'unit_amount': int(item.product.get_price() * 100),  # convert to cents
+                # Apply the discount to each line item to send to Stripe
+                'unit_amount': int((item.product.get_price() * (1 - discount)) * 100),  # convert to cents
                 'product_data': {
                     'name': item.product.name,
                 },
