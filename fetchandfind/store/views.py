@@ -289,7 +289,7 @@ def checkout_view(request):
             line_items=line_items,
             mode='payment',
             success_url=request.build_absolute_uri('/user-orders/') + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=request.build_absolute_uri('/cancel/'),
+            cancel_url=request.build_absolute_uri('/checkout/'),
         )
 
         # Store the cart item info in the session too
