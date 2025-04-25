@@ -21,6 +21,7 @@ def home(request):
     return redirect('/products/') 
 
 @login_required
+@require_POST
 def add_to_cart(request, product_id):
     if request.method == "POST":
         try:
@@ -47,6 +48,39 @@ def add_to_cart(request, product_id):
         cart_item.save()
         return redirect(request.META.get('HTTP_REFERER', '/products/'))  # Redirect back to the referring page or product list
 
+# Just a slightly modified version of add to cart
+@login_required
+@require_POST
+def buy_now(request, product_id):
+    if request.method == "POST":
+        try:
+            # Fetch the product by its ID
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            # If the product doesn't exist, return an error
+            return HttpResponseBadRequest("Product not found")
+        
+        # Get or create the CartItem for the current user and the selected product
+        cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+
+        # Get the quantity, default to 1 if not provided
+        quantity = int(request.POST.get("quantity", 1))  # Fallback to 1 if not provided
+        if quantity <= 0:
+            messages.error(request, "Invalid quantity.")
+            return redirect("product_detail", product_id=product.id)
+    
+        # Add quantity if the product already exists in the cart, or set it if it's new
+        cart_item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            product=product,
+            defaults={'quantity': quantity}
+        )
+        if not created:
+            cart_item.quantity += quantity
+        cart_item.save()
+
+        # Redirect the user to the cart page after adding the item
+        return redirect('cart')  # Replace 'cart' with the actual name of your cart view
 
 # Signup View
 def authView(request):
@@ -150,6 +184,8 @@ def decrememt_cart_item(request, item_id):
 
     return redirect('cart')
 
+@login_required
+@require_POST
 def increment_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
     if cart_item.quantity < cart_item.product.stock_quantity:
@@ -162,51 +198,13 @@ def increment_cart_item(request, item_id):
 
 #delete
 @login_required
+@require_POST
 def delete_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
     cart_item.delete()
     messages.success(request, "Item removed from cart.")
     return redirect('cart')
 
-
-#checkout , tax rate is 8.5
-#can bundle discount code with checkout 
-#@login_required
-#def checkout(request):
-
-# --- Design Notes ---
-# Need to retrieve all CartItem objects belonging to the user.
-# Show the subtotal (we need to iterate through all the CartItems)
-# (We don't have an Cart table, so therefore no model method for this)
-
-# Calculate tax (8.5% for Texas, we'll just assume it's always this)
-
-# We need an input field for the user to enter in up to 1 discount (for simplicity)
-# (If they enter in any more, it should just overwrite the existing discount)
-# The discount code should be compared against our database, and if it exists,
-# then retrieve the value of the discount, otherwise error and default to 0.00
-
-# Calculate the final price (subotal + tax - discount)
-
-# Render the checkout page, passing all of these values to the template as context
-# ------
-
-# This is what should actually create Order and OrderItems and add them to our DB
-# (So that we don't have a bunch of pending orders created whene a user opens 
-# the checkout page. Create them only after the order is actually placed.)
-# We will have to create the Order first and initialize its fields, then
-# create each Order_Item from each Cart_Item
-
-# We also need to decrease the product quantity for each order_item according
-# to each order_item's quantity in the order (i.e., user ordered 5 pizzas, 
-# so decrease the in-stock quantity of pizzas by 5 in the database)
-# Refer to how products are re-stocked in `def cancel_order` below
-
-# Finally, clear the user's cart by deleting all of the user's cart items from DB
-# and then redirect (ideally to a success page, but just redirect to user_orders)
-#@login_required
-#@require_POST
-#def place_order(request)
 
 # Checkout View
 from django.contrib.auth.decorators import login_required
@@ -215,7 +213,6 @@ from django.http import JsonResponse
 import stripe
 from decimal import Decimal
 from django.utils import timezone
-
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY

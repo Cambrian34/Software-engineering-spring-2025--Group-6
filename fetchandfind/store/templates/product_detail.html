@@ -78,10 +78,14 @@
             <p><strong>Price:</strong> ${{ product.get_price }}</p>
             <p><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
             <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
-            {% csrf_token %}
-            <button class="purchase-button" id="add-to-cart-button" type="submit">add to cart</button>
+                {% csrf_token %}
+                <button class="purchase-button" id="add-to-cart-button" type="submit">Add to cart</button>
             </form>
-            <button class="purchase-button" id="buy-now-button">buy now</button>
+            <!-- Buy Now Form -->
+            <form method="post" action="{% url 'store:buy_now' product_id=product.id %}" id="buy-now-form">
+                {% csrf_token %}
+                <button class="purchase-button" id="buy-now-button" type="submit">Buy now</button>
+            </form>
         </div>
         {% endif %}
     </div>
