@@ -231,7 +231,7 @@ def checkout_view(request):
         address = request.POST['address']
         city = request.POST['city']
         zip_code = request.POST['zip_code']
-        discount_code_str = request.POST['discount_code']
+        discount_code_str = request.POST['discount_code'].upper()
 
         # Calculate tax and total
         tax = Decimal(total_price) * Decimal('0.0825')
