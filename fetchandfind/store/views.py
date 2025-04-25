@@ -214,7 +214,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import stripe
 from decimal import Decimal
- 
+from django.utils import timezone
+
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -230,11 +231,31 @@ def checkout_view(request):
         address = request.POST['address']
         city = request.POST['city']
         zip_code = request.POST['zip_code']
+        discount_code_str = request.POST['discount_code']
 
         # Calculate tax and total
         tax = Decimal(total_price) * Decimal('0.0825')
         discount = Decimal('0.00')  # Placeholder for discount logic
-        final_price = total_price + tax - discount
+        
+        discount_code_obj = None
+
+        if discount_code_str:
+            try:
+                discount_code_obj = DiscountCode.objects.get(code=discount_code_str)
+                if discount_code_obj.start_date <= timezone.now() <= discount_code_obj.end_date:
+                    discount = discount_code_obj.discount_value
+                    final_price = total_price + tax - discount
+                    print(f'Discount applied. final price: {final_price} and total price: {total_price}')
+                else:
+                    messages.error(request, "Discount code is expired or not yet valid.")
+                    final_price = total_price + tax
+                    print(f'Discount code expired. Final price: {final_price}')
+            except DiscountCode.DoesNotExist:
+                messages.error(request, "Invalid discount code.")
+                final_price = total_price + tax
+                print(f'Invalid discount code. Final price: {final_price}')
+        else:
+            final_price = total_price + tax
 
         # Save order data in session temporarily
         request.session['order_data'] = {
