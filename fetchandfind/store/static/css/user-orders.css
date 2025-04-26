@@ -1,0 +1,44 @@
+
+
+.orders-container {
+    margin: 5vh auto;
+    padding: 5vh;
+    background-color: white;
+    width: 80%;
+    overflow-x: None;
+    border-radius: 2%;
+    min-height: 78vh;
+    }
+    
+    
+    .cancel-button {
+       width: 40%;
+       height: 4vh;
+       background-color: rgb(210, 119, 119);
+       font-size: 2vh;
+       transition: 0.1s all ease-in-out;
+       cursor: pointer;
+       color: rgb(236, 236, 236);
+       border-radius: 10px;
+       text-decoration: none;
+       text-align: center;
+       border: solid transparent 1px;
+    }
+    
+    
+    .cancel-button:hover {
+       color: #ffffff;
+       border-color: #10182F;
+       background-color: rgb(239, 139, 139);
+    }
+    
+    
+    .back-button {
+       position: relative;
+       top: 3vh;
+       left: 4vw;
+       font-size: 1.5vw;
+       color: rgb(79, 79, 79);
+       margin-left: 5%;
+    }
+    
