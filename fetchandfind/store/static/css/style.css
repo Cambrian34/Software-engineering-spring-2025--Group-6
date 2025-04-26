@@ -7,15 +7,19 @@
    }
    body{
    display: flex;
-   justify-content: center;
-   align-items: center;
    height: 100vh;
    background-color:rgb(223, 223, 223);
+   justify-content: center;
+   align-items: center;
    }
    .form-wrap{
     background-color: #fff;
-   padding: 8vw;
    border-radius: 10px;
+   max-height: 95vh;
+   padding: 3vw 5vw 3vw 5vw;
+   }
+   .signup-form-content {
+    margin-bottom: 10vh;
    }
    .form-wrap form *{
     display: block;
