@@ -73,11 +73,11 @@
         <p>Status: {{ order.status }}</p>
 
         <p>Total before tax: ${{ order.total_price }}</p>
-        <p>Tax collected: ${{ order.tax }}</p>
         {% if order.discount_applied > 0 %}
-          <p>Discount: -${{ order.discount_applied }}</p>
+          <p>Discount: -${{ order.discount_amount }} ({{ order.discount_applied}} % off)</p>
         {% endif %}
-        <p><strong>Grand Total: ${{ order.final_price }}</strong></p>
+        <p>Tax collected: ${{ order.tax }}</p>
+        <p><strong>Grand total: ${{ order.final_price }}</strong></p>
       </div>
 
       {% if order.status == "pending" %}

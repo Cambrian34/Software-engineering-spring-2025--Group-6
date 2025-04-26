@@ -231,9 +231,11 @@ def checkout_view(request):
         zip_code = request.POST['zip_code']
         discount_code_str = request.POST['discount_code'].upper()
 
-        # Calculate tax and total
+        # Initialize tax, initially assuming no discount is applied
         tax = Decimal(total_price) * Decimal('0.0825')
-        discount = Decimal('0.00')  # Placeholder for discount logic
+        # Placeholder for discount logic
+        discount_percent = Decimal('0.00')
+        discount_decimal = Decimal('0.00')
         
         discount_code_obj = None
 
@@ -241,9 +243,17 @@ def checkout_view(request):
             try:
                 discount_code_obj = DiscountCode.objects.get(code=discount_code_str)
                 if discount_code_obj.start_date <= timezone.now() <= discount_code_obj.end_date:
-                    # Convert discount to decimal (e.g., 10% -> 0.01)
-                    discount = discount_code_obj.discount_value / 100
-                    final_price = total_price + tax - discount
+                    # Discounts are stored as a percentage (e.g., 1% - 100%)
+                    discount_percent = discount_code_obj.discount_value
+                    # Convert discount to decimal (e.g., 10% -> 0.1) for calculations
+                    discount_decimal = discount_code_obj.discount_value / 100
+                    # (e.g., $100 with 10% discount = 100 * (1 - 0.1) = 100 * 0.9 = $90 discounted price)
+                    discounted_price = (total_price * (1 - discount_decimal))
+                    # (e.g., $100 with 10% discount = 100 * 0.1 = $10 discount)
+                    discount_amount = total_price * discount_decimal
+                    # Tax collected after discounts
+                    tax = discounted_price * Decimal('0.0825')
+                    final_price = discounted_price + tax
                     print(f'Discount applied. final price: {final_price} and total price: {total_price}')
                 else:
                     messages.error(request, "Discount code is expired or not yet valid.")
@@ -264,8 +274,10 @@ def checkout_view(request):
             'zip_code': zip_code,
             'total_price': str(total_price),
             'tax': str(tax),
-            'discount': str(discount),
-            'final_price': str(final_price)
+            'discount': str(discount_percent),
+            'final_price': str(final_price),
+            'discounted_price': str(discounted_price),
+            'discount_amount': str(discount_amount),
         }
 
         # Build line items for Stripe
@@ -273,7 +285,7 @@ def checkout_view(request):
             'price_data': {
                 'currency': 'usd',
                 # Apply the discount to each line item to send to Stripe
-                'unit_amount': int((item.product.get_price() * (1 - discount)) * 100),  # convert to cents
+                'unit_amount': int((item.product.get_price() * (1 - discount_decimal)) * 100),  # convert to cents
                 'product_data': {
                     'name': item.product.name,
                 },
@@ -313,6 +325,11 @@ def log_admin_action(admin_user, action_text):
 def user_orders(request):
     session_id = request.GET.get('session_id')
 
+    # Initialize context and discount_percentage variables
+    context = {
+        'orders': Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date'),
+    }
+
     if session_id and 'order_data' in request.session and 'cart_items' in request.session:
         session = stripe.checkout.Session.retrieve(session_id)
 
@@ -334,6 +351,8 @@ def user_orders(request):
                         tax=Decimal(order_data['tax']),
                         discount_applied=Decimal(order_data['discount']),
                         final_price=Decimal(order_data['final_price']),
+                        discounted_price=Decimal(order_data['discounted_price']),
+                        discount_amount=Decimal(order_data['discount_amount']),
                         status='pending',
                         checkout_session_id=session_id
                     )
@@ -355,9 +374,7 @@ def user_orders(request):
                     # Clear cart after order creation
                     CartItem.objects.filter(user=request.user).delete()
 
-    # Show all the user's orders
-    orders = Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date')
-    return render(request, 'user_orders.html', {'orders': orders})
+    return render(request, 'user_orders.html', context)
 
 
 # Cancel an order
