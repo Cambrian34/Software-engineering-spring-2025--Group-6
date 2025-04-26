@@ -295,6 +295,31 @@ def checkout_view(request):
             'quantity': item.quantity,
         } for item in cart_items]
 
+        # Add discount as a separate line item with a price of $0.00
+        if discount_amount > 0:
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': 0,  # no charge for discount, set to 0
+                    'product_data': {
+                        'name': f"{discount_percent}% off order (already applied per line item)",
+                    },
+                },
+                'quantity': 1,
+            })
+
+        # Add tax as a separate line item
+        line_items.append({
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': int(tax * 100),  # convert tax to cents
+                'product_data': {
+                    'name': 'Sales Tax (8.25%)',
+                },
+            },
+            'quantity': 1,
+        })
+
         # Create Stripe Checkout session
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
