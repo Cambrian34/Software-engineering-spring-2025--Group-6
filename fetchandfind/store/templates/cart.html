@@ -31,13 +31,13 @@
                 <form method="get" style="display: flex;" id="filterForm">
                     <input id="search-bar" type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}" />
                     <select id="filter-dropdown" name="filter" onchange="document.getElementById('filterForm').submit();">
-                        <option value="" >Filter results</option>
-                        <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: high to low</option>
-                        <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: low to high</option>
+                        <option value="" >Sort by:</option>
+                        <option value="price-high" {% if request.GET.filter == 'price-high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="price-low" {% if request.GET.filter == 'price-low' %}selected{% endif %}>Price: Low to High</option>
                         <option value="alpha-asc" {% if request.GET.filter == 'alpha-asc' %}selected{% endif %}>Name: A to Z</option>
                         <option value="alpha-desc" {% if request.GET.filter == 'alpha-desc' %}selected{% endif %}>Name: Z to A</option>
-                        <option value="quantity-high" {% if request.GET.filter == 'quantity-high' %}selected{% endif %}>Quantity: high to low</option>
-                        <option value="quantity-low" {% if request.GET.filter == 'quantity-low' %}selected{% endif %}>Quantity: low to high</option>
+                        <option value="quantity-high" {% if request.GET.filter == 'quantity-high' %}selected{% endif %}>Quantity: High to Low</option>
+                        <option value="quantity-low" {% if request.GET.filter == 'quantity-low' %}selected{% endif %}>Quantity: Low to High</option>
                     </select>
                         <input type="hidden" name="category" id="categoryInput" value="{{ request.GET.category }}">
                 </form>
@@ -98,9 +98,14 @@
                <tr style="border-top: 1px solid #ccc;">
                    <td id="product">
                        <div style="display: flex; align-items: center; margin-top: 2%;">
-                           {% if item.product.image %}
-                               <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
-                           {% endif %}
+                            <!-- Wrap the product image in a clickable link -->
+                            {% if item.product.image %}
+                                <a href="{% url 'store:product_detail' item.product.id %}" style="text-decoration: none; color: inherit;">
+                                    <div id="product-image" style="margin-right: 15px;">
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px; object-fit: cover;">
+                                    </div>
+                                </a>
+                            {% endif %}
                            <td id="name">{{ item.product.name }}</td>
                        </div>
                    </td>
@@ -139,7 +144,7 @@
 
        <div id="bottom-container">
            <div id="subtotal-container" style="text-align: right; margin-top: 5%;">
-               <strong>Total: ${{ subtotal }}</strong>
+               <strong>Base subtotal: ${{ subtotal }}</strong>
            </div>
            <div id="checkout-button-container" style="text-align: left; margin-top: -2.5%;">
                <a id="checkout-button" href="{% url 'store:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>

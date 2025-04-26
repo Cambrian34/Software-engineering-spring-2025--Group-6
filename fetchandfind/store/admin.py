@@ -19,7 +19,7 @@ admin.site.register(LogEntry)
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'stock_quantity', 'is_on_sale', 'sale_price')
-    list_filter = ('is_on_sale',)
+    list_filter = ('is_on_sale', 'created_at')
     search_fields = ('name', 'description')
 
 # --- Order Item Inline Configuration ---
@@ -27,7 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
 class OrderItemInline(admin.TabularInline): 
     model = OrderItem
     extra = 0 
-    readonly_fields = ('product', 'quantity', 'price_at_purchase', 'subtotal')
+    readonly_fields = ('original_price_at_purchase', 'product', 'quantity', 'price_at_purchase', 'subtotal')
     #can_delete = true #false to make it not editable
     def has_add_permission(self, request, obj=None):
         return False
@@ -59,9 +59,63 @@ from django.contrib import admin
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model 
 from django.conf import settings
+from django.contrib.auth.admin import UserAdmin 
 
 
-User = get_user_model() 
+# Get the custom User model
+User = get_user_model()
+
+# --- Custom User Admin Configuration ---
+class CustomUserAdmin(UserAdmin):
+    # Fields to display in the admin list view
+    list_display = (
+        'username', 'full_name', 'email', 'phone', 'user_role', 'is_staff', 'is_active', 'date_joined', 'last_login'
+    )
+
+    # Add custom filters to the admin list view
+    list_filter = (
+        'user_role', 'is_active', 'date_joined'
+    )
+
+    # Fields to search by in the admin search bar
+    search_fields = ('username', 'email', 'full_name', 'phone', 'user_role')
+
+    # Default ordering for the list view (most recent users first)
+    ordering = ('-date_joined',)
+
+    # Make fields readonly if necessary
+    # readonly_fields = ('last_login', 'date_joined')
+
+    # Fieldsets to organize fields in the user editing form
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('full_name', 'email', 'phone', 'address')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'user_role', 'groups', 'user_permissions')}),
+        ('Account dates', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    # Add the add_fieldsets attribute to preserve the default behavior for adding users
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'email', 'full_name', 'phone', 'address', 'is_active', 'is_staff', 'is_superuser', 'user_role')}
+        ),
+    )
+
+    def save_model(self, request, obj, form, change):
+        # Custom save method for setting is_staff and is_superuser based on user_role
+        if obj.user_role == 'admin':
+            obj.is_staff = True
+            obj.is_superuser = True
+        else:
+            obj.is_staff = False
+            obj.is_superuser = False
+        super().save_model(request, obj, form, change)
+
+# Unregister the default UserAdmin and register the custom one
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+
 
 class SessionAdmin(admin.ModelAdmin):
     def session_data_decoded(self, obj):

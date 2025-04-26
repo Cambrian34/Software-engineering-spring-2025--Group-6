@@ -236,7 +236,7 @@ def checkout_view(request):
         # Placeholder for discount logic
         discount_percent = Decimal('0.00')
         discount_decimal = Decimal('0.00')
-        discounted_price = Decimal('0.00')
+        discounted_price = Decimal(total_price) # Safer default initialization
         discount_amount = Decimal('0.00')
         
         discount_code_obj = None
@@ -302,13 +302,26 @@ def checkout_view(request):
                     'currency': 'usd',
                     'unit_amount': 0,  # no charge for discount, set to 0
                     'product_data': {
-                        'name': f"{discount_percent}% off order (already applied per line item)",
+                        'name': f"{discount_percent}% off order. Discount has already been applied per line item.",
                     },
                 },
                 'quantity': 1,
             })
 
-        # Add tax as a separate line item
+        # If user entered a discount code and it was invalid or expired, send $0.00 line item to Stripe
+        if discount_amount == 0 and discount_code_str:
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': 0,  # no charge for invalid discount
+                    'product_data': {
+                        'name': "Discount code was invalid or expired. No discount was applied.",
+                    },
+                },
+                'quantity': 1,
+            })
+
+        # Add tax as a separate line item. Tax already accounts for potential discount
         line_items.append({
             'price_data': {
                 'currency': 'usd',
