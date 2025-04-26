@@ -71,11 +71,24 @@
         <div class="product-img">
             <img src="{{ product.image.url }}" width="300">
         </div>
-        <!--Doesnt account for if its on sale-->
         <div class="product-info">
             <h1>{{ product.name }}</h1>
             <p>{{ product.description }}</p>
+            
+            <!-- Check if the product is on sale -->
+            {% if product.is_on_sale %}
+                <!-- Show original price stricken through and sale price beside it -->
+                <span><strong>Price: </strong></span>
+                <span style="text-decoration: line-through;">${{ product.price }}</span>
+                <span style="color: red;">${{ product.sale_price }}</span><br>
+            {% else %}
+                <!-- Show the regular price if the item is not on sale -->
+                <span><strong>Price: </strong>${{ product.price }}</span><br>
+            {% endif %}
+
+            <!--
             <p><strong>Price:</strong> ${{ product.get_price }}</p>
+            -->
             <p><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
             <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
                 {% csrf_token %}

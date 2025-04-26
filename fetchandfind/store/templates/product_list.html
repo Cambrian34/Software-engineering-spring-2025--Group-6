@@ -96,7 +96,22 @@
                 <p>No image available</p>
             {% endif %}
             <h2>{{ product.name }}</h2>
+
+            <!-- Check if the product is on sale -->
+            {% if product.is_on_sale %}
+                <!-- Show original price stricken through and sale price beside it -->
+                <span>
+                    <span style="text-decoration: line-through;">${{ product.price }}</span>
+                    <span style="color: red;">${{ product.sale_price }}</span>
+                </span><br>
+            {% else %}
+                <!-- Show the regular price if the item is not on sale -->
+                <span>${{ product.price }}</span><br>
+            {% endif %}
+            
+            <!-- 
             <p>${{ product.get_price }}</p>
+            -->
             <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ product.id }}">

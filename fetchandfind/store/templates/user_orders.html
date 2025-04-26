@@ -74,7 +74,7 @@
 
         <p>Base subtotal: ${{ order.total_price }}</p>
         {% if order.discount_applied > 0 %}
-          <p>Discount: -${{ order.discount_amount }} ({{ order.discount_applied}}% off)</p>
+          <p>Discount: -${{ order.discount_amount }} ({{ order.discount_applied}}% off order)</p>
         {% endif %}
         <p>Tax collected: ${{ order.tax }}</p>
         <p><strong>Grand total: ${{ order.final_price }}</strong></p>
@@ -104,15 +104,15 @@
               <div>
                 <strong>{{ item.product.name }}</strong><br>
                 Quantity: {{ item.quantity }}<br>
-                
+              
                 <!-- Check if the product is on sale -->
                 {% if item.was_on_sale %}
                     <!-- Show original price stricken through and sale price beside it -->
-                    <span style="text-decoration: line-through;">${{ item.original_price_at_purchase }}</span> 
-                    ${{ item.price_at_purchase}}<br>
+                    <span style="text-decoration: line-through;">${{ item.original_price_at_purchase }}</span>
+                    ${{ item.price_at_purchase }} per item<br>
                 {% else %}
                     <!-- Show the regular price if the item is not on sale -->
-                    Price per item: ${{ item.price_at_purchase }}<br>
+                    ${{ item.price_at_purchase }} per item<br>
                 {% endif %}
             
                 Product subtotal: ${{ item.subtotal }}
