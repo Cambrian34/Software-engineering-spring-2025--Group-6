@@ -72,12 +72,12 @@
         <h2>Order #{{ order.id }} — {{ order.order_date|date:"M d, Y H:i" }}</h2>
         <p>Status: {{ order.status }}</p>
 
-        <p>Total before tax: ${{ order.total_price }}</p>
-        <p>Tax collected: ${{ order.tax }}</p>
+        <p>Base subtotal: ${{ order.total_price }}</p>
         {% if order.discount_applied > 0 %}
-          <p>Discount: -${{ order.discount_applied }}</p>
+          <p>Discount: -${{ order.discount_amount }} ({{ order.discount_applied}}% off order)</p>
         {% endif %}
-        <p><strong>Grand Total: ${{ order.final_price }}</strong></p>
+        <p>Tax collected: ${{ order.tax }}</p>
+        <p><strong>Grand total: ${{ order.final_price }}</strong></p>
       </div>
 
       {% if order.status == "pending" %}
@@ -104,8 +104,18 @@
               <div>
                 <strong>{{ item.product.name }}</strong><br>
                 Quantity: {{ item.quantity }}<br>
-                Price per item: ${{ item.price_at_purchase }}<br>
-                Subtotal: ${{ item.subtotal }}
+              
+                <!-- Check if the product is on sale -->
+                {% if item.was_on_sale %}
+                    <!-- Show original price stricken through and sale price beside it -->
+                    <span style="text-decoration: line-through;">${{ item.original_price_at_purchase }}</span>
+                    ${{ item.price_at_purchase }} per item<br>
+                {% else %}
+                    <!-- Show the regular price if the item is not on sale -->
+                    ${{ item.price_at_purchase }} per item<br>
+                {% endif %}
+            
+                Product subtotal: ${{ item.subtotal }}
               </div>
             </div>
           </li>

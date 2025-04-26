@@ -21,6 +21,7 @@ def home(request):
     return redirect('/products/') 
 
 @login_required
+@require_POST
 def add_to_cart(request, product_id):
     if request.method == "POST":
         try:
@@ -45,8 +46,42 @@ def add_to_cart(request, product_id):
         if not created:
             cart_item.quantity += quantity
         cart_item.save()
+        messages.info(request, "Item was added to the cart.")
         return redirect(request.META.get('HTTP_REFERER', '/products/'))  # Redirect back to the referring page or product list
 
+# Just a slightly modified version of add to cart
+@login_required
+@require_POST
+def buy_now(request, product_id):
+    if request.method == "POST":
+        try:
+            # Fetch the product by its ID
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            # If the product doesn't exist, return an error
+            return HttpResponseBadRequest("Product not found")
+        
+        # Get or create the CartItem for the current user and the selected product
+        cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+
+        # Get the quantity, default to 1 if not provided
+        quantity = int(request.POST.get("quantity", 1))  # Fallback to 1 if not provided
+        if quantity <= 0:
+            messages.error(request, "Invalid quantity.")
+            return redirect("product_detail", product_id=product.id)
+    
+        # Add quantity if the product already exists in the cart, or set it if it's new
+        cart_item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            product=product,
+            defaults={'quantity': quantity}
+        )
+        if not created:
+            cart_item.quantity += quantity
+        cart_item.save()
+
+        # Redirect the user to the cart page after adding the item
+        return redirect('cart')  # Replace 'cart' with the actual name of your cart view
 
 # Signup View
 def authView(request):
@@ -150,6 +185,8 @@ def decrememt_cart_item(request, item_id):
 
     return redirect('cart')
 
+@login_required
+@require_POST
 def increment_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
     if cart_item.quantity < cart_item.product.stock_quantity:
@@ -162,51 +199,13 @@ def increment_cart_item(request, item_id):
 
 #delete
 @login_required
+@require_POST
 def delete_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
     cart_item.delete()
     messages.success(request, "Item removed from cart.")
     return redirect('cart')
 
-
-#checkout , tax rate is 8.5
-#can bundle discount code with checkout 
-#@login_required
-#def checkout(request):
-
-# --- Design Notes ---
-# Need to retrieve all CartItem objects belonging to the user.
-# Show the subtotal (we need to iterate through all the CartItems)
-# (We don't have an Cart table, so therefore no model method for this)
-
-# Calculate tax (8.5% for Texas, we'll just assume it's always this)
-
-# We need an input field for the user to enter in up to 1 discount (for simplicity)
-# (If they enter in any more, it should just overwrite the existing discount)
-# The discount code should be compared against our database, and if it exists,
-# then retrieve the value of the discount, otherwise error and default to 0.00
-
-# Calculate the final price (subotal + tax - discount)
-
-# Render the checkout page, passing all of these values to the template as context
-# ------
-
-# This is what should actually create Order and OrderItems and add them to our DB
-# (So that we don't have a bunch of pending orders created whene a user opens 
-# the checkout page. Create them only after the order is actually placed.)
-# We will have to create the Order first and initialize its fields, then
-# create each Order_Item from each Cart_Item
-
-# We also need to decrease the product quantity for each order_item according
-# to each order_item's quantity in the order (i.e., user ordered 5 pizzas, 
-# so decrease the in-stock quantity of pizzas by 5 in the database)
-# Refer to how products are re-stocked in `def cancel_order` below
-
-# Finally, clear the user's cart by deleting all of the user's cart items from DB
-# and then redirect (ideally to a success page, but just redirect to user_orders)
-#@login_required
-#@require_POST
-#def place_order(request)
 
 # Checkout View
 from django.contrib.auth.decorators import login_required
@@ -215,7 +214,6 @@ from django.http import JsonResponse
 import stripe
 from decimal import Decimal
 from django.utils import timezone
-
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -233,9 +231,13 @@ def checkout_view(request):
         zip_code = request.POST['zip_code']
         discount_code_str = request.POST['discount_code'].upper()
 
-        # Calculate tax and total
+        # Initialize tax, initially assuming no discount is applied
         tax = Decimal(total_price) * Decimal('0.0825')
-        discount = Decimal('0.00')  # Placeholder for discount logic
+        # Placeholder for discount logic
+        discount_percent = Decimal('0.00')
+        discount_decimal = Decimal('0.00')
+        discounted_price = Decimal('0.00')
+        discount_amount = Decimal('0.00')
         
         discount_code_obj = None
 
@@ -243,9 +245,17 @@ def checkout_view(request):
             try:
                 discount_code_obj = DiscountCode.objects.get(code=discount_code_str)
                 if discount_code_obj.start_date <= timezone.now() <= discount_code_obj.end_date:
-                    # Convert discount to decimal (e.g., 10% -> 0.01)
-                    discount = discount_code_obj.discount_value / 100
-                    final_price = total_price + tax - discount
+                    # Discounts are stored as a percentage (e.g., 1% - 100%)
+                    discount_percent = discount_code_obj.discount_value
+                    # Convert discount to decimal (e.g., 10% -> 0.1) for calculations
+                    discount_decimal = discount_code_obj.discount_value / 100
+                    # (e.g., $100 with 10% discount = 100 * (1 - 0.1) = 100 * 0.9 = $90 discounted price)
+                    discounted_price = (total_price * (1 - discount_decimal))
+                    # (e.g., $100 with 10% discount = 100 * 0.1 = $10 discount)
+                    discount_amount = total_price * discount_decimal
+                    # Tax collected after discounts
+                    tax = discounted_price * Decimal('0.0825')
+                    final_price = discounted_price + tax
                     print(f'Discount applied. final price: {final_price} and total price: {total_price}')
                 else:
                     messages.error(request, "Discount code is expired or not yet valid.")
@@ -266,8 +276,10 @@ def checkout_view(request):
             'zip_code': zip_code,
             'total_price': str(total_price),
             'tax': str(tax),
-            'discount': str(discount),
-            'final_price': str(final_price)
+            'discount': str(discount_percent),
+            'final_price': str(final_price),
+            'discounted_price': str(discounted_price),
+            'discount_amount': str(discount_amount),
         }
 
         # Build line items for Stripe
@@ -275,13 +287,38 @@ def checkout_view(request):
             'price_data': {
                 'currency': 'usd',
                 # Apply the discount to each line item to send to Stripe
-                'unit_amount': int((item.product.get_price() * (1 - discount)) * 100),  # convert to cents
+                'unit_amount': int((item.product.get_price() * (1 - discount_decimal)) * 100),  # convert to cents
                 'product_data': {
                     'name': item.product.name,
                 },
             },
             'quantity': item.quantity,
         } for item in cart_items]
+
+        # Add discount as a separate line item with a price of $0.00
+        if discount_amount > 0:
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': 0,  # no charge for discount, set to 0
+                    'product_data': {
+                        'name': f"{discount_percent}% off order (already applied per line item)",
+                    },
+                },
+                'quantity': 1,
+            })
+
+        # Add tax as a separate line item
+        line_items.append({
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': int(tax * 100),  # convert tax to cents
+                'product_data': {
+                    'name': 'Sales Tax (8.25%)',
+                },
+            },
+            'quantity': 1,
+        })
 
         # Create Stripe Checkout session
         session = stripe.checkout.Session.create(
@@ -315,6 +352,11 @@ def log_admin_action(admin_user, action_text):
 def user_orders(request):
     session_id = request.GET.get('session_id')
 
+    # Initialize context and discount_percentage variables
+    context = {
+        'orders': Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date'),
+    }
+
     if session_id and 'order_data' in request.session and 'cart_items' in request.session:
         session = stripe.checkout.Session.retrieve(session_id)
 
@@ -336,12 +378,15 @@ def user_orders(request):
                         tax=Decimal(order_data['tax']),
                         discount_applied=Decimal(order_data['discount']),
                         final_price=Decimal(order_data['final_price']),
+                        discounted_price=Decimal(order_data['discounted_price']),
+                        discount_amount=Decimal(order_data['discount_amount']),
                         status='pending',
                         checkout_session_id=session_id
                     )
 
                     for item in cart_data:
                         product = Product.objects.get(id=item['product_id'])
+                        
                         OrderItem.objects.create(
                             order=order,
                             product=product,
@@ -357,9 +402,7 @@ def user_orders(request):
                     # Clear cart after order creation
                     CartItem.objects.filter(user=request.user).delete()
 
-    # Show all the user's orders
-    orders = Order.objects.filter(user=request.user).prefetch_related('orderitem_set').order_by('-order_date')
-    return render(request, 'user_orders.html', {'orders': orders})
+    return render(request, 'user_orders.html', context)
 
 
 # Cancel an order
@@ -382,6 +425,7 @@ def cancel_order(request, order_id):
         # Update the order's status
         order.status = 'canceled'
         order.save()
+        messages.success(request, "Order was successfully canceled.")
 
     return redirect('store:user_orders')
 
