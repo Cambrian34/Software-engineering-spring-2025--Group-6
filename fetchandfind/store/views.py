@@ -236,6 +236,8 @@ def checkout_view(request):
         # Placeholder for discount logic
         discount_percent = Decimal('0.00')
         discount_decimal = Decimal('0.00')
+        discounted_price = Decimal('0.00')
+        discount_amount = Decimal('0.00')
         
         discount_code_obj = None
 
@@ -359,6 +361,7 @@ def user_orders(request):
 
                     for item in cart_data:
                         product = Product.objects.get(id=item['product_id'])
+                        
                         OrderItem.objects.create(
                             order=order,
                             product=product,

@@ -64,8 +64,10 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     added_at = models.DateTimeField(auto_now_add=True)
+
     def get_subtotal(self):
         return self.product.get_price() * self.quantity
+    
     def save(self, *args, **kwargs):
         # Ensure the quantity is greater than zero
         
@@ -111,8 +113,20 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    # To indicate if the item was on sale
+    was_on_sale = models.BooleanField(default=False)
+    # The sale price of the product at the time of purchase
+    original_price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        self.original_price_at_purchase = self.product.price  # Always set to regular price
+        if self.product.is_on_sale:
+            self.price_at_purchase = self.product.sale_price  # Use sale price if on sale
+            self.was_on_sale = True
+        else:
+            self.price_at_purchase = self.product.price  # Use regular price if not on sale
+            self.was_on_sale = False
+
         self.subtotal = self.price_at_purchase * self.quantity
         super().save(*args, **kwargs)
 
