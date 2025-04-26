@@ -19,7 +19,7 @@ admin.site.register(LogEntry)
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'stock_quantity', 'is_on_sale', 'sale_price')
-    list_filter = ('is_on_sale',)
+    list_filter = ('is_on_sale', 'created_at')
     search_fields = ('name', 'description')
 
 # --- Order Item Inline Configuration ---
@@ -27,7 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
 class OrderItemInline(admin.TabularInline): 
     model = OrderItem
     extra = 0 
-    readonly_fields = ('product', 'quantity', 'price_at_purchase', 'subtotal')
+    readonly_fields = ('original_price_at_purchase', 'product', 'quantity', 'price_at_purchase', 'subtotal')
     #can_delete = true #false to make it not editable
     def has_add_permission(self, request, obj=None):
         return False
