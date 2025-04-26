@@ -104,9 +104,11 @@
                    <tr style="border-top: 1px solid #ccc;">
                        <td id="product">
                            <div style="display: flex; align-items: center;">
-                               {% if item.product.image %}
-                                   <div id="product-image"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px;"></div>
-                               {% endif %}
+                                <a href="{% url 'store:product_detail' item.product.id %}" style="text-decoration: none; color: inherit;">
+                                    <div id="product-image" style="margin-right: 15px;">
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="height: 60px; object-fit: cover;">
+                                    </div>
+                                </a>
                                <td id="name">{{ item.product.name }}</td>
                            </div>
                        </td>
