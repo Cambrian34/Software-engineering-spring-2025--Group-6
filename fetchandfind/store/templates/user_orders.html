@@ -3,9 +3,11 @@
   {% load static %}
   <link rel="icon" type="image/png" href="{% static "../media/logo.png" %}">
   <link rel="stylesheet" href="{% static "css/header.css" %}">
-</head>
-
-<body>
+  <link rel="stylesheet" href="{% static "css/user-orders.css" %}">
+ </head>
+ 
+ 
+ <body>
     <header>
       <nav>
           <ul style="display: flex; list-style-type: none; padding: 0; align-items: center;">
@@ -58,20 +60,26 @@
                       <span class="tip">Orders</span>
                   </a>
               </li>
-
+ 
+ 
           </ul>
       </nav>
   </header>
-
-  <a id="back-link" href="{% url 'product_list' %}">&lt;-- Back</a>
-
+ 
+ 
+  <a class="back-button" id="back-link" href="{% url 'product_list' %}">&lt;-- Back</a>
+ 
+ 
+  <div class="orders-container">
   <h1>My Orders</h1>
-
+ 
+ 
   {% for order in orders %}
       <div class="order">
         <h2>Order #{{ order.id }} — {{ order.order_date|date:"M d, Y H:i" }}</h2>
         <p>Status: {{ order.status }}</p>
-
+ 
+ 
         <p>Base subtotal: ${{ order.total_price }}</p>
         {% if order.discount_applied > 0 %}
           <p>Discount: -${{ order.discount_amount }} ({{ order.discount_applied}}% off order)</p>
@@ -79,16 +87,18 @@
         <p>Tax collected: ${{ order.tax }}</p>
         <p><strong>Grand total: ${{ order.final_price }}</strong></p>
       </div>
-
+ 
+ 
       {% if order.status == "pending" %}
         <form method="post" action="{% url 'store:cancel_order' order.id %}" style="margin-top: 10px;">
           {% csrf_token %}
-          <button type="submit" style="background-color: #ff6666; color: white; border: none; padding: 6px 12px; border-radius: 4px;">
+          <button type="submit" class="cancel-button">
             Cancel Order
           </button>
         </form>
       {% endif %}
-
+ 
+ 
       <h3>Items:</h3>
       <ul>
         {% for item in order.orderitem_set.all %}
@@ -104,7 +114,7 @@
               <div>
                 <strong>{{ item.product.name }}</strong><br>
                 Quantity: {{ item.quantity }}<br>
-              
+             
                 <!-- Check if the product is on sale -->
                 {% if item.was_on_sale %}
                     <!-- Show original price stricken through and sale price beside it -->
@@ -114,7 +124,7 @@
                     <!-- Show the regular price if the item is not on sale -->
                     ${{ item.price_at_purchase }} per item<br>
                 {% endif %}
-            
+           
                 Product subtotal: ${{ item.subtotal }}
               </div>
             </div>
@@ -123,9 +133,10 @@
           <li>No items found in this order.</li>
         {% endfor %}
       </ul>
-    </div>
     <hr>
   {% empty %}
     <p>You haven't placed any orders yet.</p>
   {% endfor %}
-</body>
+ </div>
+ </body>
+ 
