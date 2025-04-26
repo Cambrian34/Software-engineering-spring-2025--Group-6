@@ -46,6 +46,7 @@ def add_to_cart(request, product_id):
         if not created:
             cart_item.quantity += quantity
         cart_item.save()
+        messages.info(request, "Item was added to the cart.")
         return redirect(request.META.get('HTTP_REFERER', '/products/'))  # Redirect back to the referring page or product list
 
 # Just a slightly modified version of add to cart
@@ -379,6 +380,7 @@ def cancel_order(request, order_id):
         # Update the order's status
         order.status = 'canceled'
         order.save()
+        messages.success(request, "Order was successfully canceled.")
 
     return redirect('store:user_orders')
 
