@@ -259,7 +259,7 @@ def checkout_view(request):
                     print(f'Discount applied. final price: {final_price} and total price: {total_price}')
                 else:
                     messages.error(request, "Discount code is expired or not yet valid.")
-                    final_price = total_price + tax
+                    final_price = round((total_price + tax), 2)
                     print(f'Discount code expired. Final price: {final_price}')
             except DiscountCode.DoesNotExist:
                 messages.error(request, "Invalid discount code.")
@@ -286,8 +286,8 @@ def checkout_view(request):
         line_items = [{
             'price_data': {
                 'currency': 'usd',
-                # Apply the discount to each line item to send to Stripe
-                'unit_amount': int((item.product.get_price() * (1 - discount_decimal)) * 100),  # convert to cents
+                # Apply the discount to each line item to send to Stripe, then convert to cents for Stripe
+                'unit_amount': round((item.product.get_price() * (1 - discount_decimal)) * 100),
                 'product_data': {
                     'name': item.product.name,
                 },
@@ -302,7 +302,21 @@ def checkout_view(request):
                     'currency': 'usd',
                     'unit_amount': 0,  # no charge for discount, set to 0
                     'product_data': {
-                        'name': f"{discount_percent}% off order. Discount has already been applied per line item.",
+                        'name': f"{discount_percent}% off order. " +
+                        f"Subtotal reduced from ${total_price}",
+                    },
+                },
+                'quantity': 1,
+            })
+
+        # Add discount as a separate line item with a price of $0.00
+        if discount_amount > 0:
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': 0,  # no charge for discount, set to 0
+                    'product_data': {
+                        'name': f"Adjusted subtotal (pre-tax): ${discounted_price:.2f}"
                     },
                 },
                 'quantity': 1,
