@@ -302,25 +302,36 @@ def checkout_view(request):
                     'currency': 'usd',
                     'unit_amount': 0,  # no charge for discount, set to 0
                     'product_data': {
-                        'name': f"{discount_percent}% off order. " +
-                        f"Subtotal reduced from ${total_price}",
+                        'name': f"Discount applied: {discount_percent}% off entire order",
                     },
                 },
                 'quantity': 1,
             })
 
-        # Add discount as a separate line item with a price of $0.00
-        if discount_amount > 0:
+            # Add the pre-discounted pre-tax total as a $0.00 line item
             line_items.append({
                 'price_data': {
                     'currency': 'usd',
-                    'unit_amount': 0,  # no charge for discount, set to 0
+                    'unit_amount': 0,  # no charge, set to 0
+                    'product_data': {
+                        'name': f"Original subtotal (pre-tax): ${total_price:.2f}"
+                    },
+                },
+                'quantity': 1,
+            })
+
+            # Add the discounted pre-tax total as a $0.00 line item
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': 0,  # no charge, set to 0
                     'product_data': {
                         'name': f"Adjusted subtotal (pre-tax): ${discounted_price:.2f}"
                     },
                 },
                 'quantity': 1,
             })
+            
 
         # If user entered a discount code and it was invalid or expired, send $0.00 line item to Stripe
         if discount_amount == 0 and discount_code_str:
