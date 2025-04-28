@@ -18,18 +18,21 @@
    max-height: 95vh;
    padding: 3vw 5vw 3vw 5vw;
    }
-   .signup-form-content {
-    margin-bottom: 10vh;
+   .form-wrap *:not(label):not(button):not(h3) {
+    font-size: 1.5vh;
    }
    .form-wrap form *{
     display: block;
     width: 100%;
    }
+   .signup-form-content {
+    height: 90vh;
+   }
    .form-wrap form label{
-   margin-bottom: 5px;
-   font-size: 14px;
+   margin-bottom: 1vh;
+   font-size: 1vw;
    font-weight: 700;
-   line-height: 26px; 
+   line-height: 2.5vh;
    }
    .form-wrap form input {
    padding: 12px 20px;
@@ -38,17 +41,17 @@
    color: rgb(223, 223, 223);
    }
    #id_username{
-    margin-bottom: 20px;
+    margin-bottom: 2vh;
    }
    .form-wrap button{
     border-radius: 5px;
    color: #FFF;
    cursor: pointer;
    text-align: center;
-   font-size: 16px;
+   font-size: 1vw;
    font-weight: 700;
    border: 1px solid transparent;
-   margin-top: 30px;
+   margin-top: 2vh;
    width: 30vh;
    height: 5vh;
    background-color: rgb(210, 119, 119);
@@ -95,3 +98,9 @@
     top: 0;
     left: 0;
    }
+
+   h3 {
+    font-size: 3vh;
+    padding-bottom: 2vh;
+   }
+
