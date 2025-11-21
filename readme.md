@@ -8,7 +8,7 @@
 - 
 
 ## Project Description
-
+Fetch & Find is a user-friendly, reliable online pet shopping center. Our aim is to provide customers with high quality pet products, from food to toys, in a convenient manner. Users will be able to register and login where they will then be able to search, filter, and shop for all their pet related needs. With features like repeat purchases, user recommendations, and an online shopping cart, Fetch & Find guarantees a smooth shopping experience.
 
 
 ## Technologies Used
